@@ -1,0 +1,212 @@
+[
+  {
+    "Plant Name": "Areca Palm",
+    "Pollutants Reduced": "Benzene, Formaldehyde, CO, Xylene",
+    "Reduction Efficiency (%)": 50,
+    "Side Effects": "Safe, requires humidity",
+    "Compatibility Notes": "Good with ferns and lilies"
+  },
+  {
+    "Plant Name": "Spider Plant",
+    "Pollutants Reduced": "CO, Formaldehyde, Benzene",
+    "Reduction Efficiency (%)": 40,
+    "Side Effects": "Non-toxic, easy maintenance",
+    "Compatibility Notes": "Works with all plants"
+  },
+  {
+    "Plant Name": "Peace Lily",
+    "Pollutants Reduced": "Ammonia, Benzene, Formaldehyde, Trichloroethylene",
+    "Reduction Efficiency (%)": 60,
+    "Side Effects": "Toxic to pets, causes allergies",
+    "Compatibility Notes": "Best with areca, ferns"
+  },
+  {
+    "Plant Name": "Snake Plant",
+    "Pollutants Reduced": "Benzene, Formaldehyde, Xylene, Nitrogen Oxide",
+    "Reduction Efficiency (%)": 50,
+    "Side Effects": "Mildly toxic to pets",
+    "Compatibility Notes": "Avoid overwatering combos"
+  },
+  {
+    "Plant Name": "Boston Fern",
+    "Pollutants Reduced": "Formaldehyde, Xylene",
+    "Reduction Efficiency (%)": 30,
+    "Side Effects": "Needs frequent misting",
+    "Compatibility Notes": "Pairs with humidity-loving plants"
+  },
+  {
+    "Plant Name": "Aloe Vera",
+    "Pollutants Reduced": "Benzene, Formaldehyde",
+    "Reduction Efficiency (%)": 20,
+    "Side Effects": "Sap irritates skin",
+    "Compatibility Notes": "Best with other succulents"
+  },
+  {
+    "Plant Name": "Rubber Plant",
+    "Pollutants Reduced": "Formaldehyde, CO2",
+    "Reduction Efficiency (%)": 60,
+    "Side Effects": "Sap irritates skin, toxic to pets",
+    "Compatibility Notes": "Avoid delicate plants nearby"
+  },
+  {
+    "Plant Name": "English Ivy",
+    "Pollutants Reduced": "Mold spores, Benzene, Formaldehyde",
+    "Reduction Efficiency (%)": 60,
+    "Side Effects": "Toxic to pets and children",
+    "Compatibility Notes": "Fast vine growth, separate space"
+  },
+  {
+    "Plant Name": "Bamboo Palm",
+    "Pollutants Reduced": "Formaldehyde, Xylene, Toluene",
+    "Reduction Efficiency (%)": 50,
+    "Side Effects": "Safe, needs indirect light",
+    "Compatibility Notes": "Pair with ferns, lilies"
+  },
+  {
+    "Plant Name": "Gerbera Daisy",
+    "Pollutants Reduced": "Benzene, Trichloroethylene",
+    "Reduction Efficiency (%)": 40,
+    "Side Effects": "Short indoor life, needs sun",
+    "Compatibility Notes": "Pairs with sun-loving plants"
+  },
+  {
+    "Plant Name": "Chinese Evergreen",
+    "Pollutants Reduced": "Formaldehyde, Benzene",
+    "Reduction Efficiency (%)": 45,
+    "Side Effects": "Toxic to pets",
+    "Compatibility Notes": "Pair with low-light plants"
+  },
+  {
+    "Plant Name": "Weeping Fig",
+    "Pollutants Reduced": "Formaldehyde, Toluene",
+    "Reduction Efficiency (%)": 30,
+    "Side Effects": "May drop leaves in dry air",
+    "Compatibility Notes": "Needs moderate light companions"
+  },
+  {
+    "Plant Name": "Philodendron",
+    "Pollutants Reduced": "Formaldehyde",
+    "Reduction Efficiency (%)": 40,
+    "Side Effects": "Toxic if ingested",
+    "Compatibility Notes": "Avoid overwatering neighbors"
+  },
+  {
+    "Plant Name": "Dracaena Marginata",
+    "Pollutants Reduced": "Benzene, Formaldehyde",
+    "Reduction Efficiency (%)": 50,
+    "Side Effects": "Toxic to pets",
+    "Compatibility Notes": "Avoid pet-friendly zones"
+  },
+  {
+    "Plant Name": "Pothos",
+    "Pollutants Reduced": "Formaldehyde, Benzene",
+    "Reduction Efficiency (%)": 35,
+    "Side Effects": "Toxic to pets",
+    "Compatibility Notes": "Good for hanging arrangements"
+  },
+  {
+    "Plant Name": "Lady Palm",
+    "Pollutants Reduced": "Formaldehyde, Ammonia",
+    "Reduction Efficiency (%)": 55,
+    "Side Effects": "Non-toxic",
+    "Compatibility Notes": "Pairs with peace lily"
+  },
+  {
+    "Plant Name": "Calathea",
+    "Pollutants Reduced": "Formaldehyde",
+    "Reduction Efficiency (%)": 25,
+    "Side Effects": "Safe, prefers humidity",
+    "Compatibility Notes": "Group with ferns"
+  },
+  {
+    "Plant Name": "Dumb Cane",
+    "Pollutants Reduced": "Formaldehyde",
+    "Reduction Efficiency (%)": 30,
+    "Side Effects": "Toxic to pets and humans",
+    "Compatibility Notes": "Keep out of reach"
+  },
+  {
+    "Plant Name": "Golden Cane Palm",
+    "Pollutants Reduced": "Formaldehyde, Benzene",
+    "Reduction Efficiency (%)": 40,
+    "Side Effects": "Safe, space-intensive",
+    "Compatibility Notes": "Place in open areas"
+  },
+  {
+    "Plant Name": "Parlor Palm",
+    "Pollutants Reduced": "Ammonia, Formaldehyde",
+    "Reduction Efficiency (%)": 35,
+    "Side Effects": "Safe for indoor use",
+    "Compatibility Notes": "Low-light compatible"
+  },
+  {
+    "Plant Name": "Ficus Audrey",
+    "Pollutants Reduced": "Formaldehyde, Toluene",
+    "Reduction Efficiency (%)": 35,
+    "Side Effects": "Sap may irritate skin",
+    "Compatibility Notes": "Pairs with low-light plants"
+  },
+  {
+    "Plant Name": "ZZ Plant",
+    "Pollutants Reduced": "Xylene, Toluene",
+    "Reduction Efficiency (%)": 25,
+    "Side Effects": "Toxic to pets",
+    "Compatibility Notes": "Avoid overwatering neighbors"
+  },
+  {
+    "Plant Name": "Norfolk Island Pine",
+    "Pollutants Reduced": "CO2, Benzene",
+    "Reduction Efficiency (%)": 20,
+    "Side Effects": "Needs high humidity",
+    "Compatibility Notes": "Good for corners"
+  },
+  {
+    "Plant Name": "Lavender",
+    "Pollutants Reduced": "Airborne toxins",
+    "Reduction Efficiency (%)": 30,
+    "Side Effects": "Strong fragrance may irritate some people",
+    "Compatibility Notes": "Keep away from strong-light plants"
+  },
+  {
+    "Plant Name": "Jade Plant",
+    "Pollutants Reduced": "Formaldehyde",
+    "Reduction Efficiency (%)": 20,
+    "Side Effects": "Mildly toxic",
+    "Compatibility Notes": "Best with succulents"
+  },
+  {
+    "Plant Name": "Schefflera",
+    "Pollutants Reduced": "Toluene, Benzene",
+    "Reduction Efficiency (%)": 30,
+    "Side Effects": "Toxic if ingested",
+    "Compatibility Notes": "Needs space, good with tall plants"
+  },
+  {
+    "Plant Name": "Bird�s Nest Fern",
+    "Pollutants Reduced": "Formaldehyde",
+    "Reduction Efficiency (%)": 25,
+    "Side Effects": "Safe, needs humidity",
+    "Compatibility Notes": "Pairs well with ferns"
+  },
+  {
+    "Plant Name": "Anthurium",
+    "Pollutants Reduced": "Ammonia, Formaldehyde",
+    "Reduction Efficiency (%)": 35,
+    "Side Effects": "Toxic to pets",
+    "Compatibility Notes": "Keep away from pets"
+  },
+  {
+    "Plant Name": "Aglaonema",
+    "Pollutants Reduced": "Formaldehyde, Benzene",
+    "Reduction Efficiency (%)": 40,
+    "Side Effects": "Toxic to pets",
+    "Compatibility Notes": "Best with indirect light plants"
+  },
+  {
+    "Plant Name": "Cactus",
+    "Pollutants Reduced": "CO2",
+    "Reduction Efficiency (%)": 15,
+    "Side Effects": "Safe",
+    "Compatibility Notes": "Works with dry air plants"
+  }
+]

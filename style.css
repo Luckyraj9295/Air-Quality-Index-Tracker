@@ -1,0 +1,57 @@
+
+body {
+    font-family: 'Arial', sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+.hero {
+    height: 100vh;
+    background: linear-gradient(to bottom right, rgba(0, 123, 255, 0.8), rgba(0, 123, 255, 0.6)) no-repeat center center;
+    background-size: cover;
+}
+
+.feature-box {
+    background-color: white;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-box:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.2);
+}
+
+footer a {
+    text-decoration: none;
+    font-weight: bold;
+}
+
+#plant-recommendation img {
+    max-width: 200px;
+    margin: 15px;
+    border-radius: 10px;
+}
+#contact-form {
+    max-width: 600px;
+    margin: 0 auto;
+}
+
+#contact-form .form-label {
+    font-weight: bold;
+}
+
+#contact-form .btn {
+    background: #4CAF50;
+    border: none;
+    transition: background 0.3s ease;
+}
+
+#contact-form .btn:hover {
+    background: #45a049;
+}
+
+#form-response {
+    font-size: 0.9rem;
+    text-align: center;
+}
+
