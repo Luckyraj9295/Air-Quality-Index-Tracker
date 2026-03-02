@@ -2,230 +2,165 @@
 
 AirMonitor is a responsive web application that provides real-time Air Quality Index (AQI) data based on user location and recommends air-purifying plants according to pollution levels.
 
-The project demonstrates API integration, dynamic UI updates, data-driven recommendations, and responsive frontend design.
+This project demonstrates API integration, asynchronous JavaScript, dynamic DOM manipulation, structured JSON data handling, and responsive frontend development.
 
-📌 Problem Statement
+📌 Overview
 
-Air pollution varies significantly across locations, and most users are unaware of real-time AQI levels and practical indoor solutions.
+Air pollution levels vary significantly by location. Many users are unaware of current AQI conditions and practical steps they can take indoors to improve air quality.
 
-AirMonitor solves this by:
+AirMonitor helps by:
 
-Fetching live AQI data
-
-Classifying pollution severity
-
-Displaying an interactive AQI map
-
-Suggesting indoor plants based on pollution level
+• Fetching live AQI data
+• Classifying pollution severity
+• Displaying an interactive AQI map
+• Suggesting air-purifying plants
+• Saving user location using localStorage
 
 🚀 Features
 
-Real-time AQI data using WAQI API
-
-Dynamic AQI category classification
-
-Location-based interactive AQI map
-
-Smart plant recommendations
-
-Persistent location storage using localStorage
-
-Responsive UI with Bootstrap
-
-Contact form integration
-
-Clean modular project structure
+• Real-time AQI data using WAQI API
+• Location-based interactive AQI map
+• Smart plant recommendations
+• AQI category classification logic
+• LocalStorage persistence
+• Responsive UI using Bootstrap 5
+• Contact form integration
+• Dynamic UI updates without page reload
 
 🛠 Tech Stack
 
-HTML5
-
-CSS3
-
-Bootstrap 5
-
-JavaScript (ES6)
-
-Fetch API
-
-WAQI (World Air Quality Index) API
-
-Leaflet.js
+• HTML5
+• CSS3
+• Bootstrap 5
+• JavaScript (ES6)
+• Fetch API
+• WAQI (World Air Quality Index) API
+• Leaflet.js
 
 📂 Project Structure
-AirMonitor/
-│
-├── index.html        # Main UI structure
-├── style.css         # Custom styling
-├── script.js         # AQI logic & API handling
-├── plants.json       # Structured plant dataset
-└── README.md
-Source Files
 
-Main UI Layout → 
+AirMonitor/
+
+index.html
+style.css
+script.js
+plants.json
+README.md
+
+Source Files:
+
+Main UI Structure → 
 
 index
+
 
 AQI Logic & API Handling → 
 
 script
 
+
 Plant Dataset → 
 
 plants
 
-Styling → 
+
+Custom Styling → 
 
 style
 
-⚙ System Architecture Overview
-1️⃣ User Input Module
+⚙ System Working
 
 User enters a location.
 
-Input is validated.
+The application validates input.
 
-Enter key also triggers search.
+An API request is sent to WAQI.
 
-2️⃣ AQI Fetching Module
+AQI value is received.
 
-The application sends a request:
+Pollution category is determined.
 
-fetch(`https://api.waqi.info/feed/${location}/?token=YOUR_API_TOKEN`)
+AQI result is displayed.
 
-The system:
+AQI map updates dynamically.
 
-Validates API response
+Plant recommendation is shown.
 
-Extracts AQI value
+Location is stored in localStorage.
 
-Categorizes AQI level
+📊 AQI Classification
 
-Dynamically updates UI
+0–50 → Good
+51–100 → Moderate
+101–150 → Unhealthy for Sensitive Groups
+151–200 → Unhealthy
+201–300 → Very Unhealthy
+300+ → Hazardous
 
-AQI Categories
-AQI Range	Category
-0–50	Good
-51–100	Moderate
-101–150	Unhealthy for Sensitive Groups
-151–200	Unhealthy
-201–300	Very Unhealthy
-300+	Hazardous
-3️⃣ Map Integration
+🌱 Plant Recommendation Logic
 
-The AQI map updates dynamically using:
+Based on AQI severity:
 
-https://www.aqicn.org/map/{location}/
+0–50 → Snake Plant, Aloe Vera
+51–100 → Areca Palm, Bamboo Palm, Peace Lily
+101–200 → Spider Plant, Boston Fern
+200+ → Rubber Plant and hardy indoor plants
 
-Selected location and map URL are stored in localStorage and restored when the page reloads.
+The plants.json dataset includes:
 
-4️⃣ Plant Recommendation Logic
+• Pollutants reduced
+• Reduction efficiency percentage
+• Side effects
+• Compatibility notes
 
-Plant suggestions are based on AQI severity.
+This allows structured and scalable recommendations.
 
-AQI Range	Recommended Plants
-0–50	Snake Plant, Aloe Vera
-51–100	Areca Palm, Bamboo Palm, Peace Lily
-101–200	Spider Plant, Boston Fern
-200+	Rubber Plant, Hardy Plants
+💡 Concepts Demonstrated
 
-The plant dataset includes:
+• Third-party API integration
+• Asynchronous JavaScript
+• Promise handling
+• Error handling
+• Conditional rendering
+• Data-driven UI updates
+• Local storage management
+• Responsive web design
 
-Pollutants reduced
+📦 Installation
 
-Reduction efficiency percentage
+Clone the repository.
 
-Side effects
+Open the project folder.
 
-Compatibility notes
+Open index.html in a browser.
 
-This allows structured data-driven recommendations.
-
-🔄 Workflow
-
-User enters location
-
-AQI API call is made
-
-AQI value is received
-
-Category is determined
-
-UI is updated dynamically
-
-Map updates
-
-Plant recommendation displayed
-
-Location saved in localStorage
-
-💡 Key Concepts Demonstrated
-
-Third-party API integration
-
-Asynchronous JavaScript
-
-Error handling
-
-Dynamic DOM manipulation
-
-Data-driven UI updates
-
-Responsive design
-
-Local storage management
-
-📦 Installation & Setup
-
-Clone the repository:
-
-git clone https://github.com/your-username/airmonitor.git
-
-Navigate to the project folder:
-
-cd airmonitor
-
-Open index.html in your browser.
+Replace the WAQI API token inside script.js with your own token.
 
 No backend setup required.
 
-🔑 API Token Setup
+🔮 Future Improvements
 
-Inside script.js, replace the API token with your own:
+• 30-day AQI prediction using Machine Learning
+• Backend integration for contact form storage
+• User authentication system
+• Dark mode toggle
+• Progressive Web App support
+• Advanced pollutant-based filtering
 
-?token=YOUR_API_TOKEN
+🎯 Learning Outcome
 
-You can generate a free token from:
-https://aqicn.org/data-platform/token/
+This project strengthens understanding of:
 
-📈 Future Improvements
+• Real-world API consumption
+• Dynamic frontend architecture
+• Environmental data visualization
+• Structured JSON data usage
+• Clean UI/UX implementation
 
-30-day AQI prediction using ML model
+If you want, I can now give you:
 
-Backend integration for contact form storage
+• A version optimized strictly for GitHub recruiters
+• A version written for college viva explanation
+• Or a stronger “System Design Explanation” version
 
-User authentication system
-
-Dark mode support
-
-Progressive Web App implementation
-
-Advanced plant filtering based on pollutants
-
-🎯 Learning Outcomes
-
-Through this project, you gain practical experience in:
-
-API consumption
-
-Real-time data rendering
-
-Frontend architecture design
-
-User experience enhancement
-
-Environmental tech applications
-
-📚 Conclusion
-
-AirMonitor successfully integrates real-time environmental data with an intuitive frontend interface. The project highlights strong understanding of API integration, conditional rendering, structured data handling, and responsive web development.
+Tell me where you plan to use it.
