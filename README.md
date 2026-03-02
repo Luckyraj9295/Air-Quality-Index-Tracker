@@ -4,6 +4,13 @@ AirMonitor is a responsive web application that provides real-time Air Quality I
 
 This project demonstrates API integration, asynchronous JavaScript, dynamic DOM manipulation, structured JSON data handling, and responsive frontend development.
 
+![HTML5](https://img.shields.io/badge/HTML-5-orange)
+![CSS3](https://img.shields.io/badge/CSS-3-blue)
+![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow)
+![Bootstrap](https://img.shields.io/badge/Bootstrap-5-purple)
+![API](https://img.shields.io/badge/API-WAQI-green)
+![License](https://img.shields.io/badge/License-MIT-lightgrey)
+
 📌 Overview
 
 Air pollution levels vary significantly by location. Many users are unaware of current AQI conditions and practical steps they can take indoors to improve air quality.
