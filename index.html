@@ -3,112 +3,468 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Air Quality Monitoring</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <title>AQI Tracker - Environmental Monitoring Dashboard</title>
+    
+    <!-- CSS Libraries -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Custom Styles -->
+    <link rel="stylesheet" href="./assets/css/style.css">
 </head>
 <body>
-    <!-- Header Section -->
-    <header class="bg-primary text-white py-3">
-        <div class="container d-flex justify-content-between align-items-center">
-            <h1 class="logo">AirMonitor</h1>
-            <nav>
-                <ul class="nav">
-                    <li class="nav-item"><a href="#home" class="nav-link text-white">Home</a></li>
-                    <li class="nav-item"><a href="#features" class="nav-link text-white">Features</a></li>
-                    <li class="nav-item"><a href="#live-aqi" class="nav-link text-white">Live AQI</a></li>
-                    <li class="nav-item"><a href="#plants" class="nav-link text-white">Recommended Plants</a></li>
-                    <li class="nav-item"><a href="#contact" class="nav-link text-white">Contact</a></li>
-                </ul>
-            </nav>
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="loader"></div>
+        <p>Loading environmental data...</p>
+    </div>
+
+    <!-- Navigation Bar -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="logo">
+                <i class="fas fa-leaf"></i>
+                <span>AQI Tracker</span>
+            </div>
+            <ul class="nav-menu">
+                <li><a href="#dashboard" class="nav-link">Dashboard</a></li>
+                <li><a href="#map" class="nav-link">Map</a></li>
+                <li><a href="#plants" class="nav-link">Plants</a></li>
+                <li><a href="#advisor" class="nav-link">Advisor</a></li>
+                <li><a href="#exposure-risk" class="nav-link">Risk</a></li>
+                <li><a href="#forecast" class="nav-link">Forecast</a></li>
+                <li><a href="#rankings" class="nav-link">Rankings</a></li>
+                <li><a href="#tips" class="nav-link">Tips</a></li>
+                <li class="nav-item-btn">
+                    <button id="darkModeToggle" class="dark-mode-btn">
+                        <i class="fas fa-moon"></i>
+                    </button>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
         </div>
-    </header>
+    </nav>
+
     <!-- Hero Section -->
-    <section id="home" class="hero d-flex align-items-center">
-        <div class="container text-center">
-            <h2 class="display-4 text-white">Breathe Cleaner, Live Better</h2>
-            <p class="lead text-white">Real-time Air Quality Monitoring and Solutions</p>
-            <a href="#live-aqi" class="btn btn-light btn-lg">Check AQI Now</a>
-        </div>
-    </section>
-    <!-- Features Section -->
-    <section id="features" class="py-5 bg-light">
-        <div class="container text-center">
-            <h2 class="mb-4">Our Features</h2>
-            <div class="row">
-                <div class="col-md-4">
-                    <div class="feature-box p-4 shadow-sm rounded">
-                        <h3>Real-Time Monitoring</h3>
-                        <p>Get live air quality updates for your location.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-box p-4 shadow-sm rounded">
-                        <h3>30-Day Predictions</h3>
-                        <p>Plan ahead with our deep learning AQI forecasts.</p>
-                    </div>
-                </div>
-                <div class="col-md-4">
-                    <div class="feature-box p-4 shadow-sm rounded">
-                        <h3>Plant Recommendations</h3>
-                        <p>Improve your air quality with plant suggestions.</p>
-                    </div>
+    <section class="hero">
+        <div class="hero-content">
+            <h1 class="hero-title">Breathe Cleaner, Live Better</h1>
+            <p class="hero-subtitle">Real-time Environmental Monitoring & Air Quality Solutions</p>
+            <div class="hero-search">
+                <div class="search-box">
+                    <input 
+                        type="text" 
+                        id="locationInput" 
+                        placeholder="Enter city or use current location"
+                        class="location-input"
+                    >
+                    <button id="searchBtn" class="search-btn">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                    <button id="geoBtn" class="geo-btn" title="Use current location">
+                        <i class="fas fa-map-marker-alt"></i>
+                    </button>
                 </div>
             </div>
         </div>
     </section>
-    <!-- Live AQI Section -->
-    <section id="live-aqi" class="py-5">
-        <div class="container text-center">
-            <h2 class="mb-4">Live Air Quality Index</h2>
-            <p>Enter your location to view current AQI:</p>
-            <div class="input-group mb-3 justify-content-center">
-                <input type="text" id="location" class="form-control w-50" placeholder="Enter location">
-                <button id="get-aqi" class="btn btn-primary">Get AQI</button>
-            </div>
-            <div id="aqi-result" class="mt-4"></div>
-            <iframe src="https://www.aqicn.org/map/" width="600" height="400"></iframe>
-        </div>
-    </section>
-    <!-- Recommended Plants Section -->
-    <section id="plants" class="py-5 bg-light">
-        <div class="container text-center">
-            <h2 class="mb-4">Recommended Plants</h2>
-            <div id="plant-recommendation">
-                <p>Enter your location to see recommended plants based on air quality.</p>
-            </div>
-        </div>
-    </section>
-    
-    <footer id="contact" class="bg-primary text-white py-5">
+
+    <!-- Dashboard Section -->
+    <section id="dashboard" class="dashboard-section">
         <div class="container">
-            <h2 class="contactus text-center">Contact Us</h2>
-            <p class="mb-4 text-center">We'd love to hear from you! Please fill out the form below.</p>
-            <form id="contact-form" class="bg-white text-dark p-4 rounded shadow-sm text-left">
-                <div class="mb-3">
-                    <label for="name" class="form-label">Name</label>
-                    <input type="text" class="form-control" id="name" placeholder="Enter your name" required>
+            <h2 class="section-title">Current Air Quality Dashboard</h2>
+            
+            <!-- Location Info -->
+            <div class="location-info">
+                <h3 id="locationName" class="location-name">Select a location</h3>
+                <p id="locationTime" class="location-time"></p>
+            </div>
+
+            <!-- Main AQI Card -->
+            <div class="aqi-main-card">
+                <div class="aqi-circle" id="aqiCircle">
+                    <div class="aqi-value" id="aqiValue">--</div>
+                    <div class="aqi-label" id="aqiLabel">AQI</div>
                 </div>
-                <div class="mb-3">
-                    <label for="email" class="form-label">Email</label>
-                    <input type="email" class="form-control" id="email" placeholder="Enter your email" required>
+                <div class="aqi-info">
+                    <h3 id="aqiCategory" class="aqi-category">No Data</h3>
+                    <p id="aqiDescription" class="aqi-description">Enter a location to see air quality data</p>
+                    <div class="aqi-scale">
+                        <span class="scale-item good">0-50 Good</span>
+                        <span class="scale-item moderate">51-100 Moderate</span>
+                        <span class="scale-item unhealthy-sg">101-150 Sensitive</span>
+                        <span class="scale-item unhealthy">151-200 Unhealthy</span>
+                        <span class="scale-item very-unhealthy">201-300 V.Unhealthy</span>
+                        <span class="scale-item hazardous">300+ Hazardous</span>
+                    </div>
                 </div>
-                <div class="mb-3">
-                    <label for="Tel" class="form-label">Contact No.</label>
-                    <input type="Tel" class="form-control" id="Tel" placeholder="Enter your Mobile Number" required>
+            </div>
+
+            <!-- Pollutants Grid -->
+            <div class="pollutants-grid">
+                <div class="pollutant-card" id="pm25Card">
+                    <div class="pollutant-header">PM2.5</div>
+                    <div class="pollutant-value" id="pm25Value">--</div>
+                    <div class="pollutant-unit">µg/m³</div>
                 </div>
-                <div class="mb-3">
-                    <label for="message" class="form-label">Message</label>
-                    <textarea class="form-control" id="message" rows="4" placeholder="Enter your message" required></textarea>
+                <div class="pollutant-card" id="pm10Card">
+                    <div class="pollutant-header">PM10</div>
+                    <div class="pollutant-value" id="pm10Value">--</div>
+                    <div class="pollutant-unit">µg/m³</div>
                 </div>
-                <button type="submit" class="btn btn-primary w-100">Submit</button>
-                <div id="form-response" class="mt-3"></div>
-            </form>
+                <div class="pollutant-card" id="o3Card">
+                    <div class="pollutant-header">O₃</div>
+                    <div class="pollutant-value" id="o3Value">--</div>
+                    <div class="pollutant-unit">µg/m³</div>
+                </div>
+                <div class="pollutant-card" id="no2Card">
+                    <div class="pollutant-header">NO₂</div>
+                    <div class="pollutant-value" id="no2Value">--</div>
+                    <div class="pollutant-unit">µg/m³</div>
+                </div>
+                <div class="pollutant-card" id="co2Card">
+                    <div class="pollutant-header">CO</div>
+                    <div class="pollutant-value" id="coValue">--</div>
+                    <div class="pollutant-unit">µg/m³</div>
+                </div>
+                <div class="pollutant-card" id="so2Card">
+                    <div class="pollutant-header">SO₂</div>
+                    <div class="pollutant-value" id="so2Value">--</div>
+                    <div class="pollutant-unit">µg/m³</div>
+                </div>
+            </div>
+
+            <!-- Charts Section -->
+            <div class="charts-grid">
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>AQI Trend (7 Days)</h3>
+                    </div>
+                    <canvas id="aqiTrendChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Pollutant Breakdown</h3>
+                    </div>
+                    <canvas id="pollutantChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Hourly Variation</h3>
+                    </div>
+                    <canvas id="hourlyChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <div class="chart-header">
+                        <h3>Historical Trend (30 Days)</h3>
+                    </div>
+                    <canvas id="historicalChart"></canvas>
+                </div>
+            </div>
         </div>
-    </footer> 
-    <script src="script.js"></script>
+    </section>
+
+    <!-- Interactive Map Section -->
+    <section id="map" class="map-section">
+        <div class="container">
+            <h2 class="section-title">Interactive AQI Map</h2>
+            <p class="section-subtitle">Click markers to view detailed AQI information</p>
+            <div id="aqiMap" class="aqi-map"></div>
+            <div class="map-info">
+                <p><i class="fas fa-info-circle"></i> Marker colors indicate AQI levels: Green (Good), Yellow (Moderate), Orange (Sensitive), Red (Unhealthy), Purple (Very Unhealthy), Maroon (Hazardous)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plant Recommendations Section -->
+    <section id="plants" class="plants-section">
+        <div class="container">
+            <h2 class="section-title">Plants That Can Improve Your Air</h2>
+            <p class="section-subtitle">Recommended based on current air quality and pollutants</p>
+            <div class="plant-filters">
+                <button class="plant-filter-btn active" data-filter="all">All Plants</button>
+                <button class="plant-filter-btn" data-filter="good">Good AQI</button>
+                <button class="plant-filter-btn" data-filter="moderate">Moderate AQI</button>
+                <button class="plant-filter-btn" data-filter="unhealthy">Unhealthy AQI</button>
+            </div>
+            <div id="plantRecommendations" class="plants-grid">
+                <!-- Plant cards will be loaded here -->
+            </div>
+        </div>
+    </section>
+
+    <!-- 30-Day Forecast Section -->
+    <section id="forecast" class="forecast-section">
+        <div class="container">
+            <h2 class="section-title">30-Day Air Quality Forecast</h2>
+            <div class="forecast-controls">
+                <button class="forecast-btn active" data-type="aqi">AQI Prediction</button>
+                <button class="forecast-btn" data-type="pm25">PM2.5 Prediction</button>
+                <button class="forecast-btn" data-type="pm10">PM10 Prediction</button>
+            </div>
+            <div class="chart-container">
+                <canvas id="forecastChart"></canvas>
+            </div>
+            <div class="forecast-info">
+                <div class="info-box warning-box">
+                    <div class="warning-header">
+                        <i class="fas fa-exclamation-triangle warning-icon"></i>
+                        <h4>Predicted High Pollution Days</h4>
+                    </div>
+                    <div class="warning-content">
+                        <p id="warningDays">No data available</p>
+                    </div>
+                </div>
+                <div class="info-box accuracy-box">
+                    <div class="accuracy-header">
+                        <i class="fas fa-chart-line accuracy-icon"></i>
+                        <h4>Forecast Accuracy</h4>
+                    </div>
+                    <div class="accuracy-content">
+                        <p id="modelQuality">Loading model...</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Pollution Advisor Section -->
+    <section id="advisor" class="advisor-section">
+        <div class="container">
+            <h2 class="section-title">Pollution Advisor & Health Recommendations</h2>
+            <p class="section-subtitle">Personalized guidance based on current air quality conditions</p>
+            
+            <div class="advisor-grid">
+                <!-- Health Advisory Card -->
+                <div id="healthAdvisory" class="advisor-card">
+                    <!-- Content populated by advisor.js -->
+                </div>
+                
+                <!-- Pollution Source Card -->
+                <div id="pollutionSource" class="advisor-card">
+                    <!-- Content populated by advisor.js -->
+                </div>
+                
+                <!-- Exposure Risk Card -->
+                <div id="exposureRisk" class="advisor-card">
+                    <!-- Content populated by advisor.js -->
+                </div>
+                
+                <!-- Pollution Trend Card -->
+                <div id="pollutionTrend" class="advisor-card">
+                    <!-- Content populated by advisor.js -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Personal Exposure Risk System -->
+    <section id="exposure-risk" class="exposure-risk-section">
+        <div class="container">
+            <h2 class="section-title">🛡️ Personal Pollution Exposure Risk System</h2>
+            <p class="section-subtitle">Estimate your health risk based on outdoor exposure duration and current air quality</p>
+            
+            <!-- Exposure Time Selector -->
+            <div class="exposure-selector">
+                <h3>⏱️ Select Your Outdoor Exposure Time:</h3>
+                <div class="time-buttons">
+                    <button class="exposure-time-btn" data-time="15min">
+                        <i class="fas fa-clock"></i>
+                        <span>15 min</span>
+                    </button>
+                    <button class="exposure-time-btn" data-time="30min">
+                        <i class="fas fa-clock"></i>
+                        <span>30 min</span>
+                    </button>
+                    <button class="exposure-time-btn" data-time="1hour">
+                        <i class="fas fa-clock"></i>
+                        <span>1 hour</span>
+                    </button>
+                    <button class="exposure-time-btn" data-time="2hours">
+                        <i class="fas fa-clock"></i>
+                        <span>2 hours</span>
+                    </button>
+                    <button class="exposure-time-btn" data-time="4hours">
+                        <i class="fas fa-clock"></i>
+                        <span>4 hours</span>
+                    </button>
+                </div>
+                <button id="refreshExposureRisk" class="refresh-btn">
+                    <i class="fas fa-sync-alt"></i> Calculate Risk
+                </button>
+            </div>
+
+            <!-- Risk Results Display -->
+            <div class="exposure-results-grid">
+                <!-- Risk Assessment Card -->
+                <div class="exposure-card">
+                    <div id="exposureRiskResults" style="display: none;">
+                        <!-- Populated by exposureRisk.js -->
+                    </div>
+                </div>
+
+                <!-- Weather Impact Card -->
+                <div class="exposure-card">
+                    <h3>🌤️ Weather Impact Analysis</h3>
+                    <div id="weatherImpact" style="display: none;">
+                        <!-- Populated by exposureRisk.js -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Risk Visualization Charts -->
+            <div class="exposure-charts-grid">
+                <div class="chart-container">
+                    <canvas id="exposureTimeChart"></canvas>
+                </div>
+                <div class="chart-container">
+                    <canvas id="pollutantImpactChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Global Pollution Ranking Section -->
+    <section id="rankings" class="rankings-section">
+        <div class="container">
+            <h2 class="section-title">Global Pollution Rankings</h2>
+            <p class="section-subtitle">See how your city compares to major cities worldwide</p>
+            
+            <div class="rankings-content">
+                <!-- City Comparison Card -->
+                <div id="cityComparison">
+                    <!-- Content populated by globalRanking.js -->
+                </div>
+                
+                <!-- Global Rankings List -->
+                <div id="globalRanking" class="ranking-card">
+                    <!-- Content populated by globalRanking.js -->
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Health Tips Section -->
+    <section id="tips" class="tips-section">
+        <div class="container">
+            <h2 class="section-title">Air Quality Health Tips</h2>
+            <div class="tips-grid">
+                <div class="tip-card">
+                    <div class="tip-icon"><i class="fas fa-mask"></i></div>
+                    <h3>When to Wear a Mask</h3>
+                    <p>Wear N95 masks when AQI exceeds 150, especially during outdoor activities.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon"><i class="fas fa-home"></i></div>
+                    <h3>Improve Indoor Air</h3>
+                    <p>Use HEPA filters, air purifiers, and keep indoor plants to maintain good air quality.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon"><i class="fas fa-running"></i></div>
+                    <h3>Exercise Safely</h3>
+                    <p>Avoid strenuous outdoor exercise when AQI is above 100. Indoor workouts are recommended.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon"><i class="fas fa-window"></i></div>
+                    <h3>Ventilation</h3>
+                    <p>Keep windows closed during high pollution days. Use air filters regularly.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon"><i class="fas fa-tree"></i></div>
+                    <h3>Plant Trees</h3>
+                    <p>Plant native trees to naturally reduce pollution in your neighborhood.</p>
+                </div>
+                <div class="tip-card">
+                    <div class="tip-icon"><i class="fas fa-car"></i></div>
+                    <h3>Reduce Emissions</h3>
+                    <p>Use public transport, walk, or cycle when possible. Good for your health and the environment.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Environmental Awareness Section -->
+    <section class="awareness-section">
+        <div class="container">
+            <h2 class="section-title">Environmental Awareness</h2>
+            <div class="awareness-content">
+                <div class="awareness-card">
+                    <h3><i class="fas fa-globe"></i> Climate Action</h3>
+                    <p>Air pollution is a major environmental concern. By monitoring AQI and making sustainable choices, you contribute to a healthier planet.</p>
+                </div>
+                <div class="awareness-card">
+                    <h3><i class="fas fa-leaf"></i> Why Air Quality Matters</h3>
+                    <p>Poor air quality affects respiratory health, mental health, and longevity. Real-time monitoring helps you make informed decisions.</p>
+                </div>
+                <div class="awareness-card">
+                    <h3><i class="fas fa-hand-holding-heart"></i> What You Can Do</h3>
+                    <p>Reduce car usage, support renewable energy, plant trees, use eco-friendly products, and advocate for clean air policies.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-section">
+                    <h3>AQI Tracker</h3>
+                    <p>Empowering communities with real-time air quality insights.</p>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="#dashboard">Dashboard</a></li>
+                        <li><a href="#map">Map</a></li>
+                        <li><a href="#forecast">Forecast</a></li>
+                        <li><a href="#plants">Plants</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Data Sources</h3>
+                    <p>Real-time data from WAQI API with local historical storage for forecasting.</p>
+                    <button id="dataSourceToggle" class="data-source-toggle">
+                        <i class="fas fa-chevron-down"></i> View Details
+                    </button>
+                    <div id="dataSourceDetails" class="data-source-details" style="display: none; margin-top: 15px;">
+                        <p style="font-size: 0.9rem; margin-bottom: 10px;"><strong>About Our AQI Calculation:</strong></p>
+                        <ul style="font-size: 0.85rem; margin: 0; padding-left: 20px;">
+                            <li><strong>Current Data:</strong> Real-time AQI from WAQI monitoring stations</li>
+                            <li><strong>Training Data:</strong> City-wise AQI history stored locally from WAQI updates</li>
+                            <li><strong>Fallback:</strong> If history is limited, WAQI-based synthetic history is used</li>
+                            <li><strong>Model:</strong> Linear regression with weekly seasonal adjustment for 30-day forecast</li>
+                            <li><strong>Auto Learning:</strong> Forecast improves as more daily WAQI entries are collected</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2024 AQI Tracker. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Scripts -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    
+    <!-- Custom Scripts -->
+    <script src="./assets/js/utils.js"></script>
+    <script src="./assets/js/api.js"></script>
+    <script src="./assets/js/dashboard.js"></script>
+    <script src="./assets/js/map.js"></script>
+    <script src="./assets/js/charts.js"></script>
+    <script src="./assets/js/prediction.js"></script>
+    <script src="./assets/js/plantRecommendation.js"></script>
+    <script src="./assets/js/advisor.js"></script>
+    <script src="./assets/js/exposureRisk.js"></script>
+    <script src="./assets/js/globalRanking.js"></script>
+    <script src="./assets/js/chatbot.js"></script>
+    <script src="./assets/js/main.js"></script>
 </body>
 </html>
