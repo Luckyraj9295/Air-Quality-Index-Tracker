@@ -7,6 +7,22 @@ const Prediction = {
   initialized: false,
   activeRequestId: 0,
   currentCity: null,
+
+  // Normalize city strings for tolerant matching (station names vs typed city names)
+  normalizeCityName: (value) => (value || '')
+    .toString()
+    .toLowerCase()
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim(),
+
+  // Match city names even when one is a detailed station label
+  cityMatches: (sourceCity, targetCity) => {
+    const source = Prediction.normalizeCityName(sourceCity);
+    const target = Prediction.normalizeCityName(targetCity);
+    if (!source || !target) return false;
+    return source === target || source.includes(target) || target.includes(source);
+  },
   
   // STEP 1: Detect current theme and return appropriate chart colors
   getChartColors: () => {
@@ -72,7 +88,7 @@ const Prediction = {
       
       // Find existing entry for this city and date
       const existingIndex = history.findIndex(
-        h => h.date === today && (h.city || '').toLowerCase() === city.toLowerCase()
+        h => h.date === today && Prediction.cityMatches(h.city, city)
       );
       
       if (existingIndex >= 0) {
@@ -115,35 +131,52 @@ const Prediction = {
   // Build historical dataset for training using WAQI/local history only
   fetchHistoricalForTraining: async (city) => {
     try {
-      console.log(`🔄 Preparing WAQI-based historical training data for ${city}...`);
+      console.log(`🔄 Preparing historical training data for ${city}...`);
 
       // Load fresh data from localStorage
       Prediction.loadStoredHistory();
 
       // Keep only entries for current city and sort by date
       const cityHistory = (Prediction.historicalData || [])
-        .filter(item => item && item.city && item.city.toLowerCase() === city.toLowerCase())
+        .filter(item => item && item.city && Prediction.cityMatches(item.city, city))
         .sort((a, b) => new Date(a.date) - new Date(b.date));
 
-      console.log(`📊 Found ${cityHistory.length} historical entries for ${city}`);
+      console.log(`📊 Found ${cityHistory.length} local historical entries for ${city}`);
 
-      if (cityHistory.length >= 7) {
-        Prediction.historicalData = cityHistory.slice(-30);
-        console.log(`✅ Loaded ${Prediction.historicalData.length} WAQI/local days for training`);
+      // Try backend MongoDB historical data first (authoritative source)
+      let backendHistory = [];
+      try {
+        const response = await fetch(
+          `http://localhost:5001/api/aqi/history/${encodeURIComponent(city)}?days=30`
+        );
+        if (response.ok) {
+          const result = await response.json();
+          backendHistory = Array.isArray(result?.data) ? result.data : [];
+          console.log(`📦 Found ${backendHistory.length} backend historical entries for ${city}`);
+        }
+      } catch (backendError) {
+        console.warn('⚠️ Backend historical data unavailable, using local/fallback data.');
+      }
+
+      // Priority order for same date: backend > local
+      const mergedRealHistory = Prediction.prepareHistoricalData([
+        ...cityHistory,
+        ...backendHistory
+      ]);
+
+      if (mergedRealHistory.length >= 7) {
+        Prediction.historicalData = mergedRealHistory;
+        console.log(`✅ Loaded ${Prediction.historicalData.length} real historical days for training`);
         return Prediction.historicalData;
       }
 
-      // If local history is too short, use WAQI-driven synthetic history fallback
-      console.warn('⚠️ Not enough WAQI/local history, generating WAQI-based fallback history');
+      // If real history is too short, use WAQI-driven synthetic fallback
+      console.warn('⚠️ Not enough real history, generating WAQI-based fallback history');
       const fallbackHistory = await API.generateSyntheticHistoricalData(city, 30);
 
-      // Map fallback data but preserve any real data we have (especially today's)
-      const today = Utils.formatDate(new Date());
-      const realTodayData = cityHistory.find(h => h.date === today);
-      
+      // Preserve any real backend/local data by date and only fill missing dates with synthetic values
       Prediction.historicalData = fallbackHistory.map(d => {
-        // If we have real data for this date (especially today), use it instead of synthetic
-        const realData = cityHistory.find(h => h.date === d.date);
+        const realData = mergedRealHistory.find(h => h.date === d.date);
         if (realData) {
           console.log(`📌 Using real AQI data for ${d.date}: ${realData.aqi} (instead of synthetic ${d.aqi})`);
           return {
@@ -167,8 +200,8 @@ const Prediction = {
       console.log('⚠️ Falling back to localStorage history');
       Prediction.loadStoredHistory();
       Prediction.historicalData = (Prediction.historicalData || [])
-        .filter(item => item && item.city && item.city.toLowerCase() === city.toLowerCase())
-        .slice(-30);
+        .filter(item => item && item.city && Prediction.cityMatches(item.city, city));
+      Prediction.historicalData = Prediction.prepareHistoricalData(Prediction.historicalData);
       return Prediction.historicalData;
     }
   },

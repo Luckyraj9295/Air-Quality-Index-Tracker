@@ -663,7 +663,15 @@ const API = {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          city: aqiData.city
+          city: aqiData.city,
+          country: aqiData.country || '',
+          latitude: aqiData.latitude,
+          longitude: aqiData.longitude,
+          aqi: aqiData.aqi,
+          pollutants: aqiData.pollutants || {},
+          dominantPollutant: aqiData.dominantPollutant || 'unknown',
+          timestamp: aqiData.timestamp || new Date().toISOString(),
+          source: 'frontend'
         })
       });
 

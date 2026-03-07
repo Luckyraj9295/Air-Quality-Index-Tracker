@@ -192,7 +192,17 @@ exports.getPollutionHistory = async (req, res) => {
  */
 exports.storeAQI = async (req, res) => {
   try {
-    const { city } = req.body;
+    const {
+      city,
+      country,
+      latitude,
+      longitude,
+      aqi,
+      pollutants,
+      dominantPollutant,
+      timestamp,
+      source
+    } = req.body;
 
     if (!city) {
       return res.status(400).json({
@@ -202,8 +212,39 @@ exports.storeAQI = async (req, res) => {
 
     console.log(`💾 Storing AQI data for: ${city}`);
 
-    // Fetch current AQI from WAQI
-    const aqiData = await waqiService.fetchCurrentAQI(city);
+    // Use provided payload when available to keep DB aligned with displayed AQI.
+    // Fallback to WAQI fetch for backward compatibility.
+    const hasPayload = (
+      Number.isFinite(Number(aqi)) &&
+      Number.isFinite(Number(latitude)) &&
+      Number.isFinite(Number(longitude))
+    );
+
+    const normalizePollutant = (value) => {
+      const key = String(value || 'unknown').toLowerCase().replace(/[^a-z0-9]/g, '');
+      const map = {
+        pm25: 'pm25',
+        pm10: 'pm10',
+        o3: 'o3',
+        no2: 'no2',
+        so2: 'so2',
+        co: 'co'
+      };
+      return map[key] || 'unknown';
+    };
+
+    const aqiData = hasPayload
+      ? {
+          city,
+          country: country || '',
+          latitude: Number(latitude),
+          longitude: Number(longitude),
+          aqi: Math.max(0, Math.min(500, Number(aqi))),
+          pollutants: pollutants || {},
+          dominantPollutant: normalizePollutant(dominantPollutant),
+          timestamp: timestamp || new Date().toISOString()
+        }
+      : await waqiService.fetchCurrentAQI(city);
 
     // Calculate category from AQI value
     const category = waqiService.getAQICategory(aqiData.aqi);
@@ -229,10 +270,11 @@ exports.storeAQI = async (req, res) => {
       existingRecord.longitude = aqiData.longitude;
       existingRecord.country = aqiData.country;
       existingRecord.lastUpdated = new Date();
+      existingRecord.source = hasPayload ? (source || 'frontend') : 'WAQI';
       
       await existingRecord.save();
       
-      console.log(`✅ Updated AQI data for ${aqiData.city} (Category: ${category})`);
+      console.log(`✅ Updated AQI data for ${aqiData.city} (Category: ${category}, Source: ${hasPayload ? (source || 'frontend') : 'WAQI'})`);
       
       return res.json({
         success: true,
@@ -252,13 +294,13 @@ exports.storeAQI = async (req, res) => {
       category: category,
       pollutants: aqiData.pollutants,
       dominantPollutant: aqiData.dominantPollutant,
-      date: new Date(),
-      source: 'WAQI'
+      date: hasPayload && aqiData.timestamp ? new Date(aqiData.timestamp) : new Date(),
+      source: hasPayload ? (source || 'frontend') : 'WAQI'
     });
 
     await aqiRecord.save();
 
-    console.log(`✅ AQI data stored successfully for ${city} (Category: ${category})`);
+    console.log(`✅ AQI data stored successfully for ${city} (Category: ${category}, Source: ${hasPayload ? (source || 'frontend') : 'WAQI'})`);
 
     res.json({
       success: true,
