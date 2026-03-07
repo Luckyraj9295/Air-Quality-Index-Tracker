@@ -675,7 +675,7 @@ const API = {
           pollutants: aqiData.pollutants || {},
           dominantPollutant: aqiData.dominantPollutant || 'unknown',
           timestamp: aqiData.timestamp || new Date().toISOString(),
-          source: 'frontend'
+          source: 'Manual'
         })
       });
 

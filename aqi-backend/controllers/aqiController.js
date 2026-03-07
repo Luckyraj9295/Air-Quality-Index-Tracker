@@ -255,7 +255,7 @@ exports.storeAQI = async (req, res) => {
     const tomorrowStart = new Date(todayStart);
     tomorrowStart.setDate(tomorrowStart.getDate() + 1);
 
-    const sourceLabel = hasPayload ? (source || 'frontend') : 'WAQI';
+    const sourceLabel = hasPayload ? (source || 'Manual') : 'WAQI';
 
     const updatedRecord = await AQIHistory.findOneAndUpdate(
       {
