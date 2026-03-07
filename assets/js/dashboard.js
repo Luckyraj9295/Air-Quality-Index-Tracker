@@ -14,12 +14,8 @@ const Dashboard = {
     
     // Automatically collect historical AQI data for predictions
     if (data.aqi !== undefined && data.city) {
-      // Store AQI data to MongoDB
-      if (typeof API !== 'undefined' && typeof API.storeAQIToDatabase === 'function') {
-        API.storeAQIToDatabase(data).catch(err => 
-          console.warn('Store failed (non-critical):', err)
-        );
-      }
+      // Note: AQI data is already stored to MongoDB by API.getAQI() or API.getAQIByCoordinates()
+      // No need to store again here to avoid duplicates
       
       // Update history and regenerate forecast for the same city
       Prediction.collectHistoricalAQI(data.aqi, data.city).then(() => {
