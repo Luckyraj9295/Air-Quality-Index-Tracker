@@ -722,7 +722,7 @@ const Prediction = {
 
       // Get current city from last location
       const lastLocation = Utils.storage.get('lastLocation');
-      const city = cityOverride || lastLocation?.city || 'Unknown';
+      const city = cityOverride || lastLocation?.stationCity || lastLocation?.city || 'Unknown';
       Prediction.currentCity = city;
 
       console.log(`🎯 Starting forecast generation for ${city} (Request #${requestId})`);

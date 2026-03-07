@@ -18,20 +18,20 @@ const Charts = {
   },
 
   // Initialize all charts
-  initCharts: async () => {
-    await Charts.createAQITrendChart();
+  initCharts: async (locationData = null) => {
+    await Charts.createAQITrendChart(locationData);
     Charts.createPollutantChart();
-    await Charts.createHourlyChart();
-    await Charts.createHistoricalChart();
+    await Charts.createHourlyChart(locationData);
+    await Charts.createHistoricalChart(locationData);
   },
 
   // Create 7-day AQI trend chart
-  createAQITrendChart: async () => {
+  createAQITrendChart: async (locationData = null) => {
     const ctx = document.getElementById('aqiTrendChart');
     if (!ctx) return;
 
-    const currentData = Utils.storage.get('lastLocation');
-    const city = currentData?.city || 'Unknown';
+    const currentData = locationData || Utils.storage.get('lastLocation');
+    const city = currentData?.stationCity || currentData?.city || 'Unknown';
     let data = [];
 
     try {
@@ -171,12 +171,12 @@ const Charts = {
   },
 
   // Create hourly variation chart (async - fetches real data)
-  createHourlyChart: async () => {
+  createHourlyChart: async (locationData = null) => {
     const ctx = document.getElementById('hourlyChart');
     if (!ctx) return;
 
     // Get current location for hourly data
-    const currentData = Utils.storage.get('lastLocation');
+    const currentData = locationData || Utils.storage.get('lastLocation');
     const lat = currentData?.lat || 40.7128; // Default NYC
     const lon = currentData?.lon || -74.0060;
 
@@ -228,13 +228,13 @@ const Charts = {
   },
 
   // Create historical 30-day trend chart (async - fetches real data)
-  createHistoricalChart: async () => {
+  createHistoricalChart: async (locationData = null) => {
     const ctx = document.getElementById('historicalChart');
     if (!ctx) return;
 
     try {
-      const currentData = Utils.storage.get('lastLocation');
-      const city = currentData?.city || 'Unknown';
+      const currentData = locationData || Utils.storage.get('lastLocation');
+      const city = currentData?.stationCity || currentData?.city || 'Unknown';
       
       const data = await API.getHistoricalData(city, 30);
 
@@ -299,7 +299,7 @@ const Charts = {
   // Update all charts with new data
   updateAll: async (data) => {
     // Regenerate charts with new location data
-    await Charts.initCharts();
+    await Charts.initCharts(data || null);
   },
 
   // Update specific chart

@@ -54,6 +54,7 @@ const AQIMap = {
       // Save to history
       Utils.storage.set('lastLocation', {
         city: data.city,
+        stationCity: data.city,
         aqi: data.aqi,
         latitude: data.latitude,
         longitude: data.longitude,
@@ -79,10 +80,12 @@ const AQIMap = {
         async (position) => {
           const { latitude, longitude } = position.coords;
           const data = await API.getAQIByCoordinates(latitude, longitude);
+          const stationCity = data.city;
           
           // Get location name
           const locationName = await Utils.getLocationName(latitude, longitude);
           data.city = locationName;
+          data.stationCity = stationCity;
           
           document.getElementById('locationInput').value = locationName;
           AQIMap.updateMap(data);
@@ -104,6 +107,7 @@ const AQIMap = {
           // Save location with coordinates
           Utils.storage.set('lastLocation', {
             city: locationName,
+            stationCity: stationCity,
             aqi: data.aqi,
             latitude: latitude,
             longitude: longitude,
