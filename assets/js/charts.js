@@ -132,9 +132,10 @@ const Charts = {
     if (!ctx) return;
 
     try {
-      // Get current location for pollutant data
+      // Use already-fetched payload first to avoid mismatches from extra API calls.
       const currentData = locationData || Utils.storage.get('lastLocation');
       const city = currentData?.stationCity || currentData?.city;
+      let pollutants = currentData?.pollutants || {};
 
       if (!city) {
         console.warn('No city data available for pollutant chart');
@@ -142,18 +143,31 @@ const Charts = {
         return;
       }
 
-      console.log(`📊 Fetching real pollutant data for ${city}...`);
+      const hasRealPollutants = Object.values(pollutants).some(
+        (value) => value !== null && value !== undefined && Number.isFinite(Number(value))
+      );
 
-      // Fetch current AQI data which includes pollutants
-      const aqiData = await API.getAQI(city);
+      // Fallback to latest stored backend data when the live payload has no pollutant values.
+      if (!hasRealPollutants) {
+        console.log(`⚠️ No pollutant values in current payload for ${city}; trying backend history...`);
+        try {
+          const response = await fetch(
+            `http://localhost:5001/api/aqi/history/${encodeURIComponent(city)}?days=1`
+          );
 
-      if (!aqiData?.pollutants) {
-        console.warn('No pollutant data available');
-        Charts.displayEmptyPollutantChart();
-        return;
+          if (response.ok) {
+            const result = await response.json();
+            const backendData = Array.isArray(result?.data) ? result.data : [];
+            const latest = backendData.length ? backendData[backendData.length - 1] : null;
+            if (latest?.pollutants) {
+              pollutants = latest.pollutants;
+            }
+          }
+        } catch (err) {
+          console.warn('Pollutant backend fallback failed:', err.message);
+        }
       }
 
-      const pollutants = aqiData.pollutants;
       const pollutantLabels = ['PM2.5', 'PM10', 'O₃', 'NO₂', 'CO', 'SO₂'];
       const pollutantKeys = ['pm25', 'pm10', 'o3', 'no2', 'co', 'so2'];
       const pollutantValues = pollutantKeys.map(key => Math.round(Number(pollutants[key]) || 0));
