@@ -2,9 +2,9 @@
 
 const Dashboard = {
   // Update all dashboard elements
-  updateDashboard: (data) => {
+  updateDashboard: async (data) => {
     Dashboard.updateAQIDisplay(data);
-    Dashboard.updatePollutants(data);
+    await Dashboard.updatePollutants(data);
     Dashboard.updateLocationInfo(data);
 
     // Keep exposure-risk section in sync with every new AQI payload.
@@ -43,8 +43,31 @@ const Dashboard = {
   },
 
   // Update pollutant cards
-  updatePollutants: (data) => {
-    const pollutants = data.pollutants || {};
+  updatePollutants: async (data) => {
+    let pollutants = data.pollutants || {};
+    
+    console.log(`📊 Dashboard pollutants from current data:`, pollutants);
+    
+    // If we don't have pollutants from live data, try to fetch from MongoDB
+    const hasValidPollutants = Object.values(pollutants).some(v => v !== null && v !== undefined);
+    if (!hasValidPollutants && data.city) {
+      console.log(`⚠️ No pollutant data in live response, fetching from MongoDB...`);
+      try {
+        const response = await fetch(
+          `http://localhost:5001/api/aqi/history/${encodeURIComponent(data.city)}?days=1`
+        );
+        if (response.ok) {
+          const result = await response.json();
+          const latestRecord = Array.isArray(result?.data) && result.data.length > 0 ? result.data[result.data.length - 1] : null;
+          if (latestRecord?.pollutants) {
+            pollutants = latestRecord.pollutants;
+            console.log(`✅ Loaded pollutants from MongoDB:`, pollutants);
+          }
+        }
+      } catch (err) {
+        console.warn('Could not fetch pollutants from MongoDB:', err.message);
+      }
+    }
     
     const pollutantMap = {
       'pm25Value': pollutants.pm25,
@@ -58,7 +81,11 @@ const Dashboard = {
     for (const [elementId, value] of Object.entries(pollutantMap)) {
       const element = document.getElementById(elementId);
       if (element) {
-        element.textContent = value !== null && value !== undefined ? Math.round(value) : '--';
+        const displayValue = value !== null && value !== undefined ? Math.round(value) : '--';
+        element.textContent = displayValue;
+        console.log(`  ✓ ${elementId}: ${displayValue}`);
+      } else {
+        console.warn(`  ⚠️ Element not found: ${elementId}`);
       }
     }
   },

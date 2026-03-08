@@ -36,7 +36,7 @@ const AQIMap = {
       const data = await API.getAQI(city);
       
       AQIMap.updateMap(data);
-      Dashboard.updateDashboard(data);
+      await Dashboard.updateDashboard(data);
       await Charts.updateAll(data);
       PlantRecommendation.updateRecommendations(data);
       
@@ -89,7 +89,7 @@ const AQIMap = {
           
           document.getElementById('locationInput').value = locationName;
           AQIMap.updateMap(data);
-          Dashboard.updateDashboard(data);
+          await Dashboard.updateDashboard(data);
           await Charts.updateAll(data);
           PlantRecommendation.updateRecommendations(data);
           
