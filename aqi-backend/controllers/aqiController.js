@@ -107,14 +107,22 @@ exports.getHistoricalAQI = async (req, res) => {
     cutoffDate.setDate(cutoffDate.getDate() - parseInt(days));
     cutoffDate.setHours(0, 0, 0, 0); // Set to midnight to include full day
 
-    // Query database for historical data
-    const historicalData = await AQIHistory.find({
-      city: { $regex: new RegExp(city, 'i') },
+    // Query database for historical data - try exact match first, then regex fallback
+    let historicalData = await AQIHistory.find({
+      city: city,
       date: { $gte: cutoffDate }
     })
     .sort({ date: 1 })
     .select('-__v -createdAt -updatedAt')
     .lean();
+
+    // If no exact matches, try case-insensitive regex
+    if (historicalData.length === 0) {
+      console.log(`⚠️ No exact city match for "${city}", trying regex...`);
+      historicalData = await AQIHistory.find({
+        city: { $regex: new RegExp(`^${city}`, 'i') },
+        date: { $gte: cutoffDate }
+      })
 
     if (historicalData.length === 0) {
       return res.status(404).json({
@@ -323,12 +331,22 @@ exports.getAQIStatistics = async (req, res) => {
     cutoffDate.setDate(cutoffDate.getDate() - parseInt(days));
     cutoffDate.setHours(0, 0, 0, 0); // Set to midnight to include full day
 
-    const historicalData = await AQIHistory.find({
-      city: { $regex: new RegExp(city, 'i') },
+    // Try exact match first, then regex fallback
+    let historicalData = await AQIHistory.find({
+      city: city,
       date: { $gte: cutoffDate }
     })
     .sort({ date: 1 })
     .lean();
+
+    if (historicalData.length === 0) {
+      historicalData = await AQIHistory.find({
+        city: { $regex: new RegExp(`^${city}`, 'i') },
+        date: { $gte: cutoffDate }
+      })
+      .sort({ date: 1 })
+      .lean();
+    }
 
     if (historicalData.length === 0) {
       return res.status(404).json({
