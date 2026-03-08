@@ -20,7 +20,7 @@ const Charts = {
   // Initialize all charts
   initCharts: async (locationData = null) => {
     await Charts.createAQITrendChart(locationData);
-    Charts.createPollutantChart();
+    await Charts.createPollutantChart(locationData);
     await Charts.createHourlyChart(locationData);
     await Charts.createHistoricalChart(locationData);
   },
@@ -126,8 +126,85 @@ const Charts = {
     });
   },
 
-  // Create pollutant breakdown chart
-  createPollutantChart: () => {
+  // Create pollutant breakdown chart with real data
+  createPollutantChart: async (locationData = null) => {
+    const ctx = document.getElementById('pollutantChart');
+    if (!ctx) return;
+
+    try {
+      // Get current location for pollutant data
+      const currentData = locationData || Utils.storage.get('lastLocation');
+      const city = currentData?.stationCity || currentData?.city;
+
+      if (!city) {
+        console.warn('No city data available for pollutant chart');
+        Charts.displayEmptyPollutantChart();
+        return;
+      }
+
+      console.log(`📊 Fetching real pollutant data for ${city}...`);
+
+      // Fetch current AQI data which includes pollutants
+      const aqiData = await API.getAQI(city);
+
+      if (!aqiData?.pollutants) {
+        console.warn('No pollutant data available');
+        Charts.displayEmptyPollutantChart();
+        return;
+      }
+
+      const pollutants = aqiData.pollutants;
+      const pollutantLabels = ['PM2.5', 'PM10', 'O₃', 'NO₂', 'CO', 'SO₂'];
+      const pollutantKeys = ['pm25', 'pm10', 'o3', 'no2', 'co', 'so2'];
+      const pollutantValues = pollutantKeys.map(key => Math.round(Number(pollutants[key]) || 0));
+
+      console.log(`✅ Pollutant values: PM2.5=${pollutantValues[0]}, PM10=${pollutantValues[1]}, O₃=${pollutantValues[2]}, NO₂=${pollutantValues[3]}, CO=${pollutantValues[4]}, SO₂=${pollutantValues[5]}`);
+
+      if (Charts.instances.pollutant) {
+        Charts.instances.pollutant.destroy();
+      }
+
+      Charts.instances.pollutant = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: pollutantLabels,
+          datasets: [{
+            data: pollutantValues,
+            backgroundColor: [
+              '#ef4444',
+              '#f97316',
+              '#eab308',
+              '#3b82f6',
+              '#8b5cf6',
+              '#06b6d4'
+            ],
+            borderColor: 'white',
+            borderWidth: 2
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: 'bottom',
+              labels: {
+                padding: 15,
+                font: { size: 11 },
+                boxWidth: 12
+              }
+            }
+          }
+        }
+      });
+    } catch (error) {
+      console.error('Error creating pollutant chart:', error);
+      Charts.displayEmptyPollutantChart();
+    }
+  },
+
+  // Display empty pollutant chart when data unavailable
+  displayEmptyPollutantChart: () => {
     const ctx = document.getElementById('pollutantChart');
     if (!ctx) return;
 
@@ -140,7 +217,7 @@ const Charts = {
       data: {
         labels: ['PM2.5', 'PM10', 'O₃', 'NO₂', 'CO', 'SO₂'],
         datasets: [{
-          data: [120, 100, 60, 80, 50, 40],
+          data: [0, 0, 0, 0, 0, 0],
           backgroundColor: [
             '#ef4444',
             '#f97316',
