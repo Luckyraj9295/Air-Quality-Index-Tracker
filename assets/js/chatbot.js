@@ -100,8 +100,10 @@ const Chatbot = {
     const chatbot = document.getElementById('chatbot');
     if (!chatbot) return;
 
-    chatbot.classList.toggle('hidden');
-    Chatbot.isOpen = !Chatbot.isOpen;
+    // CSS uses .active to make chatbot visible and interactive.
+    chatbot.classList.remove('hidden');
+    chatbot.classList.toggle('active');
+    Chatbot.isOpen = chatbot.classList.contains('active');
 
     if (Chatbot.isOpen) {
       document.getElementById('chatInput')?.focus();

@@ -2345,6 +2345,7 @@ PLANTS SECTION
     border-color: var(--primary-green);
 }
 
+.chatbot-send,
 .chatbot-send-btn {
     background: var(--primary-green);
     color: white;
@@ -2355,11 +2356,13 @@ PLANTS SECTION
     transition: all 0.2s ease;
 }
 
+.chatbot-send:hover,
 .chatbot-send-btn:hover {
     background: #059669;
     transform: scale(1.05);
 }
 
+.chatbot-send:disabled,
 .chatbot-send-btn:disabled {
     background: #d1d5db;
     cursor: not-allowed;
