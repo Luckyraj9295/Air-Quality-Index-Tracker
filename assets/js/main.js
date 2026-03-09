@@ -3,10 +3,13 @@
 const App = {
   // Initialize application
   init: async () => {
-    console.log('Initializing AQI Tracker Application...');
+    console.log('=== AQI Tracker Initializing ===');
     
-    // CRITICAL: Clear old location cache to prevent sticky Jaipur issue
-    localStorage.removeItem('lastLocation');
+    // CRITICAL: Clear ALL location-related cache
+    console.log('🗑️ Clearing localStorage cache...');
+    localStorage.clear();  // Clear everything to be absolutely sure
+    sessionStorage.clear();
+    console.log('✅ Cache cleared');
     
     // Setup UI elements
     App.setupUI();
@@ -18,6 +21,7 @@ const App = {
     const locationInput = document.getElementById('locationInput');
     if (locationInput && !locationInput.value) {
       locationInput.placeholder = 'Detecting your location...';
+      console.log('📍 Waiting for geolocation...');
     }
     
     // Initialize all systems
