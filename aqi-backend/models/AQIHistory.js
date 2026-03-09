@@ -134,12 +134,11 @@ AQIHistorySchema.methods.getHealthImpactScore = function() {
 };
 
 // Pre-save middleware to set category
-AQIHistorySchema.pre('save', function(next) {
+AQIHistorySchema.pre('save', function() {
   if (this.isModified('aqi')) {
     this.category = this.constructor.getAQICategory(this.aqi);
   }
   this.lastUpdated = Date.now();
-  next();
 });
 
 // Virtual for formatted date

@@ -167,9 +167,8 @@ PlantSchema.methods.calculateRecommendationScore = function() {
 };
 
 // Pre-save middleware to calculate recommendation score
-PlantSchema.pre('save', function(next) {
+PlantSchema.pre('save', function() {
   this.recommendationScore = this.calculateRecommendationScore();
-  next();
 });
 
 // Virtual for display name
