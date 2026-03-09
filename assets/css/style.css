@@ -59,12 +59,27 @@ body {
     color: var(--text-primary);
     background-color: var(--off-white);
     transition: background-color 0.3s ease, color 0.3s ease;
+    overflow-x: hidden;
 }
 
 .container {
     max-width: 1200px;
     margin: 0 auto;
-    padding: 0 20px;
+    padding: 0 clamp(14px, 2.5vw, 20px);
+}
+
+img,
+canvas,
+svg,
+video {
+    max-width: 100%;
+}
+
+input,
+button,
+select,
+textarea {
+    font: inherit;
 }
 
 /* ================================
@@ -291,7 +306,7 @@ body {
 
 .location-input {
     flex: 1;
-    min-width: 300px;
+    min-width: 0;
     border: none;
     padding: 12px 20px;
     font-size: 1rem;
@@ -539,7 +554,7 @@ body {
 /* Charts Grid */
 .charts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 30px;
     margin-top: 40px;
 }
@@ -1585,7 +1600,7 @@ PLANTS SECTION
 
 .exposure-results-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 25px;
     margin-bottom: 40px;
 }
@@ -1595,6 +1610,7 @@ PLANTS SECTION
     padding: 30px;
     border-radius: 15px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    overflow-wrap: anywhere;
 }
 
 .exposure-card h3 {
@@ -1767,7 +1783,7 @@ PLANTS SECTION
 
 .exposure-charts-grid {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
     gap: 25px;
 }
 
@@ -2561,16 +2577,23 @@ PLANTS SECTION
    ================================ */
 
 @media (max-width: 768px) {
+    .nav-container {
+        position: relative;
+    }
+
     .nav-menu {
         display: none;
         position: absolute;
-        top: 60px;
+        top: 100%;
         left: 0;
         width: 100%;
+        max-height: calc(100vh - 72px);
+        overflow-y: auto;
         background: var(--card-bg);
         flex-direction: column;
         gap: 0;
-        padding: 20px 0;
+        padding: 12px 0;
+        box-shadow: var(--shadow-light);
     }
 
     .nav-menu.active {
@@ -2578,7 +2601,7 @@ PLANTS SECTION
     }
 
     .nav-menu li {
-        padding: 15px 20px;
+        padding: 14px 20px;
         border-bottom: 1px solid var(--border-color);
     }
 
@@ -2586,25 +2609,41 @@ PLANTS SECTION
         display: flex;
     }
 
+    .hero {
+        padding: 90px 14px;
+    }
+
     .hero-title {
-        font-size: 2.5rem;
+        font-size: 2.25rem;
     }
 
     .hero-subtitle {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
     }
 
     .search-box {
         flex-direction: column;
+        border-radius: 18px;
     }
 
-    .location-input {
-        min-width: auto;
+    .location-input,
+    .search-btn,
+    .geo-btn {
+        width: 100%;
+        border-radius: 12px;
+    }
+
+    .search-btn,
+    .geo-btn {
+        min-height: 46px;
+        justify-content: center;
     }
 
     .aqi-main-card {
         flex-direction: column;
         text-align: center;
+        padding: 26px;
+        gap: 24px;
     }
 
     .aqi-info {
@@ -2615,28 +2654,28 @@ PLANTS SECTION
         grid-template-columns: 1fr;
     }
 
-    .pollutants-grid {
-        grid-template-columns: repeat(2, 1fr);
+    .chart-container {
+        padding: 18px;
     }
 
-    .aqi-map {
-        height: 400px;
+    .pollutants-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
     .section-title {
         font-size: 2rem;
     }
-    
+
     .advisor-grid {
         grid-template-columns: 1fr;
         gap: 25px;
     }
-    
+
     .advisor-card {
-        padding: 30px;
+        padding: 24px;
         min-height: auto;
     }
-    
+
     .rankings-content {
         grid-template-columns: 1fr;
     }
@@ -2648,76 +2687,69 @@ PLANTS SECTION
     .ranking-list {
         max-height: 500px;
     }
-    
+
     .plants-grid {
         max-height: 600px;
     }
-    
+
     .ranking-item {
         grid-template-columns: 40px 1fr;
-        gap: 15px;
-        padding: 15px 18px;
+        gap: 12px;
+        padding: 14px;
     }
-    
+
     .aqi-badge {
         grid-column: 2;
         justify-self: start;
         min-width: 70px;
-        padding: 10px 16px;
+        padding: 10px 14px;
     }
-    
+
     .pollutant-tag {
         grid-column: 2;
-        justify-self: end;
-        font-size: 0.8rem;
+        justify-self: start;
+        font-size: 0.78rem;
+        white-space: normal;
     }
-    
+
     .city-info h3 {
-        font-size: 1.1rem;
+        font-size: 1.05rem;
     }
-    
+
     .chatbot-container {
-        width: 90%;
-        right: 5%;
+        width: min(92vw, 380px);
+        right: 4vw;
         max-height: 500px;
     }
-    
+
     .chatbot-fab {
         width: 50px;
         height: 50px;
         font-size: 1.2rem;
     }
-    
-    .exposure-results-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .exposure-charts-grid {
-        grid-template-columns: 1fr;
-    }
-    
+
     .time-buttons {
         gap: 10px;
     }
-    
+
     .exposure-time-btn {
         min-width: 100px;
         padding: 15px 20px;
     }
-    
+
     .weather-grid {
         grid-template-columns: 1fr;
     }
-    
+
     .aqi-map {
         height: 300px;
     }
-    
+
     .danger-day-card {
         min-width: 120px;
         padding: 12px 14px;
     }
-    
+
     .danger-day-aqi {
         font-size: 1.4rem;
     }
@@ -2725,7 +2757,7 @@ PLANTS SECTION
 
 @media (max-width: 480px) {
     .hero-title {
-        font-size: 2rem;
+        font-size: 1.9rem;
     }
 
     .section-title {
@@ -2741,6 +2773,10 @@ PLANTS SECTION
         grid-template-columns: 1fr;
     }
 
+    .aqi-main-card {
+        padding: 20px;
+    }
+
     .aqi-circle {
         width: 150px;
         height: 150px;
@@ -2750,10 +2786,14 @@ PLANTS SECTION
         font-size: 2.5rem;
     }
 
+    .aqi-scale {
+        justify-content: center;
+    }
+
     .nav-menu {
         gap: 0;
     }
-    
+
     .activity-grid {
         grid-template-columns: repeat(2, 1fr);
     }
@@ -2761,72 +2801,83 @@ PLANTS SECTION
     .ranking-list {
         max-height: 400px;
     }
-    
+
     .plants-grid {
         max-height: 500px;
     }
-    
+
     .chatbot-container {
         width: 95%;
         right: 2.5%;
         bottom: 80px;
         max-height: 450px;
     }
-    
+
     .message-content {
         max-width: 85%;
     }
-    
+
+    .exposure-selector,
+    .exposure-card {
+        padding: 18px;
+    }
+
     .exposure-time-btn {
         min-width: 90px;
         padding: 12px 15px;
         font-size: 0.9rem;
     }
-    
+
     .exposure-selector h3 {
         font-size: 1.1rem;
     }
-    
-    .exposure-results-grid,
-    .exposure-charts-grid {
-        grid-template-columns: 1fr;
-    }
-    
+
     .chart-container {
         height: 300px;
     }
-    
+
     .time-buttons {
         gap: 8px;
     }
-    
+
+    .forecast-controls {
+        gap: 10px;
+    }
+
+    .forecast-btn {
+        width: 100%;
+        max-width: 320px;
+    }
+
     .refresh-btn {
-        padding: 12px 30px;
+        width: 100%;
+        justify-content: center;
+        padding: 12px 20px;
         font-size: 0.9rem;
     }
-    
+
     #warningDays {
         gap: 8px;
         justify-content: center;
     }
-    
+
     .danger-day-card {
         min-width: 100px;
         padding: 10px 12px;
     }
-    
+
     .danger-day-name {
         font-size: 0.85rem;
     }
-    
+
     .danger-day-date {
         font-size: 0.8rem;
     }
-    
+
     .danger-day-aqi {
         font-size: 1.3rem;
     }
-    
+
     .danger-day-category {
         font-size: 0.7rem;
     }
