@@ -7,6 +7,11 @@ const AQIMap = {
   heatmapLayer: null,
   heatmapEnabled: false,
 
+  getLocationMode: () => Utils.storage.get('locationMode', 'auto'),
+  setLocationMode: (mode) => Utils.storage.set('locationMode', mode),
+  getPreferredManualCity: () => Utils.storage.get('preferredLocationCity', ''),
+  setPreferredManualCity: (city) => Utils.storage.set('preferredLocationCity', city),
+
   // Initialize the map
   init: () => {
     const mapContainer = document.getElementById('aqiMap');
@@ -23,22 +28,38 @@ const AQIMap = {
     }).addTo(AQIMap.map);
 
     // Add geolocation button
-    document.getElementById('geoBtn')?.addEventListener('click', AQIMap.getCurrentLocation);
+    document.getElementById('geoBtn')?.addEventListener('click', () => {
+      AQIMap.setLocationMode('auto');
+      AQIMap.getCurrentLocation();
+    });
 
     const locationInput = document.getElementById('locationInput');
     if (locationInput) {
       locationInput.value = 'Detecting your location...';
     }
 
-    // Get initial location using browser GPS first, then IP fallback
-    AQIMap.getCurrentLocation();
+    // Use preferred manual city when selected by user; otherwise auto-detect.
+    const preferredCity = AQIMap.getPreferredManualCity();
+    if (AQIMap.getLocationMode() === 'manual' && preferredCity) {
+      AQIMap.searchLocation(preferredCity, 'manual');
+    } else {
+      AQIMap.getCurrentLocation();
+    }
   },
 
   // Search location
-  searchLocation: async (city) => {
+  searchLocation: async (city, source = 'manual') => {
     try {
+      const requestedCity = String(city || '').trim();
+      if (!requestedCity) return;
+
       Utils.toggleLoading(true);
-      const data = await API.getAQI(city);
+      const data = await API.getAQI(requestedCity);
+
+      if (source === 'manual') {
+        AQIMap.setLocationMode('manual');
+        AQIMap.setPreferredManualCity(requestedCity);
+      }
       
       AQIMap.updateMap(data);
       await Dashboard.updateDashboard(data);
@@ -96,6 +117,8 @@ const AQIMap = {
         try {
           const { latitude, longitude } = position.coords;
           console.log(`✅ GPS SUCCESS: ${latitude}, ${longitude}`);
+
+          AQIMap.setLocationMode('auto');
 
           // Validate GPS against IP-based coarse location and auto-correct if mismatch is very large.
           let selectedLat = latitude;
@@ -252,7 +275,7 @@ const AQIMap = {
       if (locationInput) {
         locationInput.value = fallbackCity;
       }
-      await AQIMap.searchLocation(fallbackCity);
+      await AQIMap.searchLocation(fallbackCity, 'auto');
     } catch (error) {
       console.error('Fallback location load failed:', error);
       Utils.showNotification('Failed to load fallback location data', 'error');
