@@ -129,7 +129,16 @@ const Utils = {
         `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
       );
       const data = await response.json();
-      return data.address?.city || data.address?.town || 'Unknown Location';
+      
+        // Prefer clean city names over bureaucratic ones
+        let cityName = data.address?.city || data.address?.town || data.address?.village;
+      
+        // Remove "Municipal Corporation" suffix if present
+        if (cityName && cityName.includes('Municipal Corporation')) {
+          cityName = cityName.replace(' Municipal Corporation', '').trim();
+        }
+      
+        return cityName || 'Unknown Location';
     } catch (error) {
       console.error('Error getting location name:', error);
       return 'Unknown Location';

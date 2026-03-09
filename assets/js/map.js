@@ -30,8 +30,8 @@ const AQIMap = {
       locationInput.value = 'Detecting your location...';
     }
 
-    // Get initial location
-    AQIMap.getCurrentLocation();
+    // Get initial location - Use IP-based first for reliability
+    AQIMap.loadFallbackLocation();
   },
 
   // Search location
