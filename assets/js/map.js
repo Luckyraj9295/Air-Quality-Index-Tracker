@@ -56,12 +56,6 @@ const AQIMap = {
       Utils.toggleLoading(true);
       const data = await API.getAQI(requestedCity);
 
-      if (data?.isDemo) {
-        Utils.showNotification('Live AQI unavailable for this location right now. Please try nearby city or current location.', 'warning');
-        Utils.toggleLoading(false);
-        return;
-      }
-
       if (source === 'manual') {
         AQIMap.setLocationMode('manual');
         AQIMap.setPreferredManualCity(requestedCity);
@@ -157,9 +151,6 @@ const AQIMap = {
           }
 
           const data = await API.getAQIByCoordinates(selectedLat, selectedLon);
-          if (data?.isDemo) {
-            throw new Error('Live AQI unavailable for GPS coordinates');
-          }
           console.log('📡 WAQI API returned station:', data.city);
           const stationCity = data.city;
 
@@ -249,9 +240,6 @@ const AQIMap = {
         }
 
         const data = await API.getAQIByCoordinates(ipLocation.latitude, ipLocation.longitude);
-        if (data?.isDemo) {
-          throw new Error('Live AQI unavailable for IP coordinates');
-        }
         data.city = ipCity;
         data.stationCity = data.stationCity || data.city;
 
