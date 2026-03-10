@@ -1,122 +1,200 @@
-# AirVanta - Environmental Monitoring and AQI Intelligence Platform
+# AirVanta — AQI Intelligence & Environmental Monitoring Platform
 
 ![Node.js](https://img.shields.io/badge/Backend-Node.js-339933?logo=node.js\&logoColor=white)
-![Express](https://img.shields.io/badge/Framework-Express.js-000000?logo=express\&logoColor=white)
+![Express](https://img.shields.io/badge/API-Express.js-000000?logo=express\&logoColor=white)
 ![MongoDB](https://img.shields.io/badge/Database-MongoDB-47A248?logo=mongodb\&logoColor=white)
-![Chart.js](https://img.shields.io/badge/Charts-Chart.js-FF6384?logo=chartdotjs\&logoColor=white)
-![Netlify](https://img.shields.io/badge/Frontend-Deployed%20on%20Netlify-00C7B7?logo=netlify\&logoColor=white)
-![Render](https://img.shields.io/badge/Backend-Deployed%20on%20Render-46E3B7?logo=render\&logoColor=black)
+![Chart.js](https://img.shields.io/badge/DataViz-Chart.js-FF6384?logo=chartdotjs\&logoColor=white)
+![Netlify](https://img.shields.io/badge/Frontend-Netlify-00C7B7?logo=netlify\&logoColor=white)
+![Render](https://img.shields.io/badge/Backend-Render-46E3B7?logo=render\&logoColor=black)
 ![License](https://img.shields.io/badge/License-MIT-blue)
 
-AirVanta is a full-stack environmental intelligence web application that helps users understand current air quality, predict upcoming pollution risk, and take practical action through health guidance, exposure-risk scoring, and plant recommendations.
+AirVanta is a **full-stack environmental intelligence platform** that helps users monitor real-time air quality, predict pollution trends, and receive actionable health and plant recommendations.
 
-Link: https://airvanta.netlify.app/
+The platform integrates real-world environmental data APIs and transforms them into **interactive dashboards, forecasting insights, and personalized environmental guidance**.
 
-## Recruiter Snapshot
+Live Demo
+https://airvanta.netlify.app/
 
-- Built a production-style full-stack app with a modular frontend and REST API backend.
-- Integrated third-party environmental data APIs and normalized responses for UI consumption.
-- Implemented forecasting endpoints and risk-oriented UX (danger-day alerts, exposure analysis).
-- Designed for real-world usability: location search, map interaction, mobile responsiveness, and dark mode.
+---
 
-## Key Capabilities
+# What This Project Demonstrates
 
-- Real-time AQI dashboard with pollutant cards (PM2.5, PM10, O3, NO2, CO, SO2)
-- Interactive map using Leaflet markers for location-based AQI exploration
-- 30-day prediction workflow with model metadata and confidence context
-- Personal exposure-risk module based on time outdoors and current conditions
-- AI chatbot assistant for contextual air-quality guidance
-- Global city ranking and comparison views
-- Plant recommendation engine with pollutant-oriented matching
-- Dark mode and mobile-first responsive behavior
+This project showcases **full-stack engineering skills expected in internships and junior developer roles**, including:
 
-## Tech Stack
+* REST API design and backend architecture
+* Real-time data integration from external APIs
+* Data visualization and interactive dashboards
+* Environmental data analysis and forecasting logic
+* Modular frontend architecture
+* Production-style deployment
 
-### Frontend
-- HTML5
-- CSS3 (custom responsive design system)
-- Vanilla JavaScript (modular architecture)
-- Chart.js
-- Leaflet.js
+---
 
-### Backend
-- Node.js
-- Express.js
-- MongoDB + Mongoose
-- Axios
-- node-cron
+# Core Features
 
-### External Data Services
-- WAQI API
-- Open-Meteo API
+### Real-Time AQI Dashboard
 
-## Project Architecture
+Displays the current Air Quality Index along with pollutant breakdown including:
 
-```text
-Website/
-|- index.html
-|- assets/
-|  |- css/style.css
-|  |- js/
-|     |- api.js
-|     |- dashboard.js
-|     |- map.js
-|     |- charts.js
-|     |- prediction.js
-|     |- plantRecommendation.js
-|     |- advisor.js
-|     |- exposureRisk.js
-|     |- globalRanking.js
-|     |- chatbot.js
-|     |- main.js
-|- aqi-backend/
-|  |- server.js
-|  |- controllers/
-|  |- routes/
-|  |- services/
-|  |- models/
-|  |- cron/
-|  |- scripts/
+* PM2.5
+* PM10
+* O₃
+* NO₂
+* CO
+* SO₂
+
+### Interactive AQI Map
+
+* Built using Leaflet.js
+* Explore AQI levels by location
+* Clickable markers for city-level insights
+
+### 30-Day AQI Prediction
+
+* Forecast pollution trends using regression-based modeling
+* Highlights potential **high-risk pollution days**
+
+### Exposure Risk Calculator
+
+Estimates health risk based on:
+
+* current AQI
+* duration of outdoor exposure
+
+### AI AQI Assistant
+
+Interactive chatbot providing:
+
+* air-quality explanations
+* outdoor safety guidance
+* plant recommendations
+
+### Smart Plant Recommendation Engine
+
+Suggests air-purifying plants based on:
+
+* dominant pollutant
+* purification efficiency
+* environmental compatibility
+
+### Global AQI Rankings
+
+Compare pollution levels across major cities worldwide.
+
+### Dark Mode & Mobile UI
+
+Responsive design optimized for both desktop and mobile devices.
+
+---
+
+# Tech Stack
+
+## Frontend
+
+* HTML5
+* CSS3
+* Vanilla JavaScript
+* Chart.js
+* Leaflet.js
+
+## Backend
+
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+* Axios
+* node-cron
+
+---
+
+# External Data Sources
+
+### WAQI (World Air Quality Index)
+
+Provides real-time AQI data and pollutant measurements.
+
+### Open-Meteo API
+
+Provides environmental and weather data for forecasting context.
+
+---
+
+# Project Architecture
+
+```
+AirVanta/
+│
+├── index.html
+├── assets/
+│   ├── css/
+│   │   └── style.css
+│   └── js/
+│       ├── api.js
+│       ├── dashboard.js
+│       ├── map.js
+│       ├── charts.js
+│       ├── prediction.js
+│       ├── plantRecommendation.js
+│       ├── advisor.js
+│       ├── exposureRisk.js
+│       ├── globalRanking.js
+│       ├── chatbot.js
+│       └── main.js
+│
+└── aqi-backend/
+    ├── server.js
+    ├── controllers/
+    ├── routes/
+    ├── services/
+    ├── models/
+    ├── cron/
+    └── scripts/
 ```
 
-## API Surface (Backend)
+---
 
-Representative endpoints:
+# Example Backend API Endpoints
 
-- `GET /api/aqi/:city`
-- `GET /api/aqi/coordinates/:lat/:lon`
-- `GET /api/aqi/history/:city?days=30`
-- `GET /api/prediction/:city?days=30`
-- `GET /api/prediction/:city/stats?days=30`
-- `GET /api/prediction/:city/dangerous-days?threshold=150`
-- `GET /api/plants/recommend?pollutant=PM2.5&limit=5`
-- `GET /api/plants/top?limit=10`
-- `GET /api/exposure-risk/:city?duration=60`
+```
+GET /api/aqi/:city
+GET /api/aqi/coordinates/:lat/:lon
+GET /api/aqi/history/:city?days=30
+GET /api/prediction/:city?days=30
+GET /api/prediction/:city/dangerous-days
+GET /api/plants/recommend
+GET /api/exposure-risk/:city
+```
 
-## Getting Started
+These endpoints power the dashboard, prediction system, and recommendation modules.
 
-### 1) Frontend
+---
 
-1. Open `index.html` directly in a browser, or
-2. Use a local static server (recommended for consistent behavior).
+# Local Setup
 
-### 2) Backend
+### Clone Repository
 
-From `aqi-backend/`:
+```
+git clone https://github.com/yourusername/airvanta
+cd airvanta
+```
 
-```bash
+---
+
+### Install Backend Dependencies
+
+```
+cd aqi-backend
 npm install
-npm run seed
-npm run dev
 ```
 
-Server default: `http://localhost:5000`
+---
 
-### 3) Environment Variables
+### Environment Variables
 
-Create `.env` inside `aqi-backend/` with values for:
+Create a `.env` file inside `aqi-backend`.
 
-```env
+```
 PORT=5000
 NODE_ENV=development
 MONGODB_URI=your_mongodb_connection_string
@@ -129,40 +207,54 @@ PREDICTION_DAYS=30
 MIN_HISTORICAL_DAYS=15
 ```
 
-## Engineering Highlights
+---
 
-- Separation of concerns across controllers, services, and route layers
-- Reusable frontend modules with feature-based organization
-- Graceful API behavior for partial-data scenarios (fallback-oriented responses)
-- Scheduled data collection for historical AQI persistence and trend modeling
-- User-centric UI decisions: clear AQI semantics, risk messaging, and actionable recommendations
+### Run Backend Server
 
-## Why This Project Is Job-Relevant
+```
+npm run dev
+```
 
-This project demonstrates the skills expected in full-stack/product engineering roles:
+Server runs at:
 
-- API integration and data transformation
-- Backend endpoint design and reliability handling
-- State-driven frontend UI updates
-- Data visualization and interaction design
-- Domain modeling with MongoDB/Mongoose
-- Feature delivery across end-to-end user flows
+```
+http://localhost:5000
+```
 
-## Suggested Resume Bullets
+---
 
-- Built a full-stack environmental intelligence dashboard using JavaScript, Node.js, Express, and MongoDB, delivering real-time AQI insights and predictive analytics.
-- Developed modular REST APIs for AQI retrieval, forecasting, and exposure-risk assessment, with robust fallback handling for sparse historical datasets.
-- Implemented interactive map and chart-driven UI experiences with Leaflet and Chart.js to improve interpretability of pollution trends.
-- Engineered pollutant-aware recommendation features (health guidance and plant matching) to translate data into actionable user decisions.
+# Engineering Highlights
 
-## Roadmap
+* Modular frontend architecture with reusable components
+* Clean backend structure separating routes, controllers, and services
+* Forecasting logic implemented with time-series regression
+* Scheduled AQI data collection using cron jobs
+* Graceful fallback handling for incomplete API responses
+* Responsive UI with dark-mode support
 
-- Add authentication and user-specific watchlists
-- Add exportable reports (CSV/PDF)
-- Improve forecast model explainability and metrics surfacing
-- Add CI pipeline and automated API tests
-- Add deployment docs for cloud hosting
+---
 
-## License
+# Resume-Ready Project Impact
 
-MIT
+You can summarize this project on your resume as:
+
+* Built a full-stack AQI intelligence dashboard using **Node.js, Express, MongoDB, and JavaScript**, delivering real-time environmental insights and forecasting.
+* Developed **REST APIs and data pipelines** integrating external air-quality services to power interactive dashboards.
+* Implemented **interactive map visualization and chart-based trend analysis** using Leaflet.js and Chart.js.
+* Designed **pollution-aware recommendation systems** for health advisory and air-purifying plant suggestions.
+
+---
+
+# Future Improvements
+
+* User authentication and personalized dashboards
+* Exportable environmental reports (CSV/PDF)
+* Improved forecasting models with additional environmental factors
+* CI/CD pipeline for automated deployment
+* API testing and monitoring
+
+---
+
+# License
+
+MIT License
