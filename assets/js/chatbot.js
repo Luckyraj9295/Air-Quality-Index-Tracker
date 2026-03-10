@@ -31,6 +31,9 @@ const Chatbot = {
     high_pollution_days: [
       'forecast', 'prediction', 'predict', 'future', 'upcoming', 'next week', 'coming days', 
       'high pollution days', 'bad days', 'dangerous days', 'worst days', 'when should', 'avoid going'
+    ],
+    farewell: [
+      'bye', 'goodbye', 'good bye', 'see you', 'cya', 'take care', 'ttyl', 'later', 'farewell'
     ]
   },
 
@@ -271,8 +274,12 @@ const Chatbot = {
   detectIntent: (question) => {
     const normalized = question.toLowerCase();
 
+    // Catch 'by', 'bye', 'byy', 'byee', 'byyy' etc. before word-boundary matching
+    if (/^by+[e!.\s]*$/i.test(normalized.trim())) return 'farewell';
+
     if (Chatbot.matchesIntent(normalized, 'greeting')) return 'greeting';
     if (Chatbot.matchesIntent(normalized, 'thanks')) return 'thanks';
+    if (Chatbot.matchesIntent(normalized, 'farewell')) return 'farewell';
     if (Chatbot.matchesIntent(normalized, 'outdoor_safety')) return 'outdoor_safety';
     if (Chatbot.matchesIntent(normalized, 'health_risk')) return 'health_risk';
     if (Chatbot.matchesIntent(normalized, 'plant_recommendation')) return 'plant_recommendation';
@@ -452,6 +459,16 @@ const Chatbot = {
         ${aqi ? summary : '<p><strong>Tip:</strong> Search for a location to see current air quality data.</p>'}
         <p>How can I help you today? Try asking about outdoor safety, health risks, pollution causes, air-purifying plants, or predicted high pollution days! 🌱📅</p>
       `;
+    }
+
+    // Farewell intent
+    if (intent === 'farewell') {
+      const responses = [
+        `<p>👋 Goodbye! Stay safe and breathe clean! 🌿</p>`,
+        `<p>👋 Take care! Remember to check AQI before heading out! 🌍</p>`,
+        `<p>👋 See you! Stay informed about your air quality! 💚</p>`
+      ];
+      return responses[Math.floor(Math.random() * responses.length)];
     }
 
     // Thanks intent

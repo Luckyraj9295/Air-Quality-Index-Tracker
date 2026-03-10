@@ -16,7 +16,6 @@ const Advisor = {
     Advisor.displayHealthAdvisory();
     Advisor.displayPollutionSource();
     Advisor.displayExposureRisk();
-    Advisor.detectPollutionTrend();
   },
 
   // HEALTH ADVISORY SYSTEM
@@ -484,68 +483,5 @@ const Advisor = {
         ]
       };
     }
-  },
-
-  // POLLUTION TREND DETECTION
-  detectPollutionTrend: () => {
-    const history = Prediction.historicalData || [];
-    
-    if (history.length < 7) {
-      return; // Need at least a week of data
-    }
-
-    // Calculate last week average
-    const lastWeek = history.slice(-7);
-    const lastWeekAvg = lastWeek.reduce((sum, h) => sum + h.aqi, 0) / lastWeek.length;
-
-    // Calculate previous week average
-    const previousWeek = history.slice(-14, -7);
-    const previousWeekAvg = previousWeek.length > 0 
-      ? previousWeek.reduce((sum, h) => sum + h.aqi, 0) / previousWeek.length
-      : lastWeekAvg;
-
-    const change = lastWeekAvg - previousWeekAvg;
-    const changePercent = ((change / previousWeekAvg) * 100).toFixed(1);
-
-    const trendContainer = document.getElementById('pollutionTrend');
-    if (!trendContainer) return;
-
-    let trendHTML = '';
-    if (change > 5) {
-      trendHTML = `
-        <div class="trend-alert increasing">
-          <i class="fas fa-arrow-up"></i>
-          <div class="trend-content">
-            <h3>Air Pollution is Increasing</h3>
-            <p>AQI increased by ${Math.abs(changePercent)}% compared to last week</p>
-            <span class="trend-value">Last Week: ${lastWeekAvg.toFixed(0)} | Previous: ${previousWeekAvg.toFixed(0)}</span>
-          </div>
-        </div>
-      `;
-    } else if (change < -5) {
-      trendHTML = `
-        <div class="trend-alert decreasing">
-          <i class="fas fa-arrow-down"></i>
-          <div class="trend-content">
-            <h3>Air Quality is Improving</h3>
-            <p>AQI decreased by ${Math.abs(changePercent)}% compared to last week</p>
-            <span class="trend-value">Last Week: ${lastWeekAvg.toFixed(0)} | Previous: ${previousWeekAvg.toFixed(0)}</span>
-          </div>
-        </div>
-      `;
-    } else {
-      trendHTML = `
-        <div class="trend-alert stable">
-          <i class="fas fa-equals"></i>
-          <div class="trend-content">
-            <h3>Air Quality is Stable</h3>
-            <p>No significant change from last week</p>
-            <span class="trend-value">Last Week: ${lastWeekAvg.toFixed(0)} | Previous: ${previousWeekAvg.toFixed(0)}</span>
-          </div>
-        </div>
-      `;
-    }
-
-    trendContainer.innerHTML = trendHTML;
   }
 };
