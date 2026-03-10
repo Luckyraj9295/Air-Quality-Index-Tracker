@@ -499,14 +499,40 @@ const Prediction = {
     }));
   },
 
+  // Resolve chart metric configuration for forecast toggle type
+  getForecastMetricConfig: (type = 'aqi') => {
+    const configs = {
+      aqi: {
+        key: 'aqi',
+        label: 'AQI',
+        unit: 'AQI',
+        historicalValue: (d) => Number(d?.aqi)
+      },
+      pm25: {
+        key: 'pm25',
+        label: 'PM2.5',
+        unit: 'ug/m3',
+        historicalValue: (d) => Number(d?.pollutants?.pm25)
+      },
+      pm10: {
+        key: 'pm10',
+        label: 'PM10',
+        unit: 'ug/m3',
+        historicalValue: (d) => Number(d?.pollutants?.pm10)
+      }
+    };
+
+    return configs[type] || configs.aqi;
+  },
+
   // Setup forecast control buttons
   setupForecastControls: () => {
     const buttons = document.querySelectorAll('.forecast-btn');
     buttons.forEach(btn => {
       btn.addEventListener('click', (e) => {
         buttons.forEach(b => b.classList.remove('active'));
-        e.target.classList.add('active');
-        const type = e.target.dataset.type;
+        e.currentTarget.classList.add('active');
+        const type = e.currentTarget.dataset.type;
         Prediction.generateAndDisplayForecast(type);
       });
     });
@@ -556,13 +582,31 @@ const Prediction = {
     // STEP 2: Get theme-aware colors
     const colors = Prediction.getChartColors();
 
+    const metricConfig = Prediction.getForecastMetricConfig(type);
+
     // Prepare historical labels and data
     const historicalLabels = historicalData.map(d => Prediction.formatChartDate(d.dateObj || Prediction.parseAQIDate(d.date) || new Date()));
-    const historicalValues = historicalData.map(d => d.aqi || 0);
+    const historicalValues = historicalData.map(d => {
+      const rawValue = metricConfig.historicalValue(d);
+      if (!Number.isNaN(rawValue) && Number.isFinite(rawValue)) {
+        return Math.round(rawValue);
+      }
+
+      // Keep PM charts usable even when pollutant history is partially missing.
+      if (type === 'pm25') return Math.round((d.aqi || 0) * 0.8);
+      if (type === 'pm10') return Math.round((d.aqi || 0) * 0.6);
+      return Math.round(d.aqi || 0);
+    });
 
     // Prepare prediction labels and data
     const predictionLabels = predictions.map(p => Prediction.formatChartDate(Prediction.parseAQIDate(p.date) || new Date()));
-    const predictionValues = predictions.map(p => p[type] || p.aqi);
+    const predictionValues = predictions.map(p => {
+      const candidate = Number(p?.[metricConfig.key]);
+      if (!Number.isNaN(candidate) && Number.isFinite(candidate)) {
+        return Math.round(candidate);
+      }
+      return Math.round(Number(p?.aqi) || 0);
+    });
 
     // Final x-axis label sequence: past -> future
     const allLabels = [...historicalLabels, ...predictionLabels];
@@ -584,7 +628,7 @@ const Prediction = {
         labels: allLabels,
         datasets: [
           {
-            label: 'Historical AQI',
+            label: `Historical ${metricConfig.label}`,
             data: historicalSeries,
             borderColor: '#3b82f6',
             backgroundColor: 'rgba(59, 130, 246, 0.1)',
@@ -597,7 +641,7 @@ const Prediction = {
             pointBorderWidth: 1
           },
           {
-            label: '30-Day Forecast',
+            label: `30-Day ${metricConfig.label} Forecast`,
             data: predictionSeries,
             borderColor: '#ef4444',
             backgroundColor: 'rgba(239, 68, 68, 0.1)',
@@ -642,7 +686,8 @@ const Prediction = {
                 if (context.parsed.y !== null) {
                   const value = Math.round(context.parsed.y);
                   const isForecast = (context.dataset.label || '').toLowerCase().includes('forecast');
-                  return isForecast ? `Predicted AQI: ${value}` : `Historical AQI: ${value}`;
+                  const prefix = isForecast ? 'Predicted' : 'Historical';
+                  return `${prefix} ${metricConfig.label}: ${value}`;
                 }
                 return '';
               }
@@ -669,7 +714,9 @@ const Prediction = {
             },
             title: {
               display: true,
-              text: 'AQI Value',
+              text: metricConfig.unit === 'AQI'
+                ? 'AQI Value'
+                : `${metricConfig.label} (${metricConfig.unit})`,
               color: colors.textPrimary,
               font: { size: 13, weight: '600' }
             }
@@ -785,12 +832,18 @@ const Prediction = {
         predictions = backendResult.predictions.map((p, index) => {
           const aqi = p.aqi || 0;
           const predictionDate = predictionDates[index] || predictionDates[predictionDates.length - 1];
+          const backendPm25 = Number(p?.pm25);
+          const backendPm10 = Number(p?.pm10);
           return {
             day: index + 1,
             date: Prediction.toLocalISODate(predictionDate),
             aqi,
-            pm25: Math.round(aqi * 0.8),
-            pm10: Math.round(aqi * 0.6),
+            pm25: (!Number.isNaN(backendPm25) && Number.isFinite(backendPm25))
+              ? Math.round(backendPm25)
+              : Math.round(aqi * 0.8),
+            pm10: (!Number.isNaN(backendPm10) && Number.isFinite(backendPm10))
+              ? Math.round(backendPm10)
+              : Math.round(aqi * 0.6),
             isDangerous: aqi > 150,
             category: Prediction.getAQICategory(aqi)
           };
