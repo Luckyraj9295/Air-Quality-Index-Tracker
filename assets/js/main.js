@@ -8,11 +8,10 @@ const App = {
     App.setupDarkMode();
     App.setupNavigation();
     
-    // Load initial data
     // Don't pre-fill location - let map auto-detect current location
     const locationInput = document.getElementById('locationInput');
     if (locationInput && !locationInput.value) {
-      locationInput.placeholder = 'Detecting your location...';
+      locationInput.placeholder = 'Enter city or use current location';
     }
     
     // Initialize all systems

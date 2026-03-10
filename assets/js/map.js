@@ -6,6 +6,35 @@ const AQIMap = {
   currentMarker: null,
   heatmapLayer: null,
   heatmapEnabled: false,
+  locationHintTimeout: null,
+
+  showLocationDetectingHint: () => {
+    const hintEl = document.getElementById('locationDetectingHint');
+    if (!hintEl) return;
+
+    if (AQIMap.locationHintTimeout) {
+      clearTimeout(AQIMap.locationHintTimeout);
+      AQIMap.locationHintTimeout = null;
+    }
+
+    hintEl.textContent = 'Detecting your location...';
+    hintEl.classList.add('visible');
+  },
+
+  hideLocationDetectingHint: (delay = 300) => {
+    const hintEl = document.getElementById('locationDetectingHint');
+    if (!hintEl) return;
+
+    if (AQIMap.locationHintTimeout) {
+      clearTimeout(AQIMap.locationHintTimeout);
+    }
+
+    AQIMap.locationHintTimeout = setTimeout(() => {
+      hintEl.classList.remove('visible');
+      hintEl.textContent = '';
+      AQIMap.locationHintTimeout = null;
+    }, delay);
+  },
 
   // Initialize the map
   init: () => {
@@ -27,7 +56,7 @@ const AQIMap = {
 
     const locationInput = document.getElementById('locationInput');
     if (locationInput) {
-      locationInput.value = 'Detecting your location...';
+      locationInput.placeholder = 'Enter city or use current location';
     }
 
     // Get initial location using browser geolocation.
@@ -81,6 +110,7 @@ const AQIMap = {
   // Get current location
   getCurrentLocation: () => {
     Utils.toggleLoading(true);
+    AQIMap.showLocationDetectingHint();
     Utils.getDeviceCoordinates({ timeout: 10000, maximumAge: 0 })
       .then(async ({ latitude, longitude }) => {
         try {
@@ -98,6 +128,9 @@ const AQIMap = {
           if (locationInput) {
             locationInput.value = resolvedCity;
           }
+
+          // Detection phase is complete; hide hint before heavier UI updates.
+          AQIMap.hideLocationDetectingHint(0);
 
           AQIMap.updateMap(data);
           await Dashboard.updateDashboard(data);
@@ -129,6 +162,7 @@ const AQIMap = {
         } catch (error) {
           console.error('Error resolving current location AQI:', error);
           Utils.showNotification('Could not fetch AQI for current location. Loading fallback.', 'error');
+          AQIMap.hideLocationDetectingHint();
           Utils.toggleLoading(false);
           AQIMap.loadFallbackLocation();
         }
@@ -143,6 +177,7 @@ const AQIMap = {
         } else {
           Utils.showNotification('Unable to detect current location. Loading saved/default location.', 'info');
         }
+        AQIMap.hideLocationDetectingHint();
         Utils.toggleLoading(false);
         AQIMap.loadFallbackLocation();
       });
