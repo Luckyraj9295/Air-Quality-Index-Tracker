@@ -249,7 +249,7 @@ exports.storeAQI = async (req, res) => {
           country: country || '',
           latitude: Number(latitude),
           longitude: Number(longitude),
-          aqi: Math.max(0, Math.min(500, Number(aqi))),
+          aqi: Math.max(0, Number(aqi)),
           pollutants: pollutants || {},
           dominantPollutant: normalizePollutant(dominantPollutant),
           timestamp: timestamp || new Date().toISOString()

@@ -27,8 +27,7 @@ const AQIHistorySchema = new mongoose.Schema({
   aqi: {
     type: Number,
     required: [true, 'AQI value is required'],
-    min: 0,
-    max: 500
+    min: 0
   },
   
   // Pollutant measurements (μg/m³)

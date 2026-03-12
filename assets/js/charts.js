@@ -89,6 +89,8 @@ const Charts = {
       Charts.instances.aqiTrend.destroy();
     }
 
+    // Dynamically set y-axis max based on data
+    const maxAQI = Math.max(500, ...data.map(d => d.value)) + 20;
     Charts.instances.aqiTrend = new Chart(ctx, {
       type: 'line',
       data: {
@@ -113,7 +115,7 @@ const Charts = {
         scales: {
           y: {
             beginAtZero: true,
-            max: 300,
+            max: maxAQI,
             ticks: {
               callback: function(value) {
                 return value;
@@ -283,6 +285,8 @@ const Charts = {
         Charts.instances.hourly.destroy();
       }
 
+      // Dynamically set y-axis max based on data
+      const maxAQI = Math.max(500, ...data.map(d => d.aqi)) + 20;
       Charts.instances.hourly = new Chart(ctx, {
         type: 'bar',
         data: {
@@ -305,7 +309,7 @@ const Charts = {
           scales: {
             y: {
               beginAtZero: true,
-              max: 300,
+              max: maxAQI,
               grid: {
                 color: 'rgba(0, 0, 0, 0.05)'
               }
@@ -339,6 +343,8 @@ const Charts = {
         Charts.instances.historical.destroy();
       }
 
+      // Dynamically set y-axis max based on data
+      const maxAQI = Math.max(500, ...data.map(d => d.aqi)) + 20;
       Charts.instances.historical = new Chart(ctx, {
         type: 'line',
         data: {
@@ -375,7 +381,7 @@ const Charts = {
           scales: {
             y: {
               beginAtZero: true,
-              max: 300,
+              max: maxAQI,
               grid: {
                 color: 'rgba(0, 0, 0, 0.05)'
               }

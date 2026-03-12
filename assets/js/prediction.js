@@ -401,8 +401,8 @@ const Prediction = {
         // 3) Moving-average style smoothing using last known AQI
         let aqi = (0.7 * withNoise) + (0.3 * lastKnownAQI);
 
-        // 4) Clamp to realistic AQI range
-        aqi = Math.max(50, Math.min(350, Math.round(aqi)));
+        // 4) Clamp to minimum 0, but allow any upper value
+        aqi = Math.max(0, Math.round(aqi));
 
         // Derive pollutant estimates from AQI
         const pm25 = Math.max(0, aqi * 0.8 + (Math.random() - 0.5) * 10);
@@ -622,6 +622,9 @@ const Prediction = {
       ...predictionValues
     ];
 
+    // Dynamically set y-axis max for forecast chart
+    const allAQI = [...historicalValues, ...predictionValues].filter(v => v !== null && v !== undefined);
+    const maxAQI = Math.max(500, ...allAQI) + 20;
     Prediction.forecastChart = new Chart(ctx, {
       type: 'line',
       data: {
@@ -697,11 +700,7 @@ const Prediction = {
         scales: {
           y: {
             beginAtZero: true,
-            suggestedMax: Math.max(
-              300,
-              ...historicalValues,
-              ...predictionValues.filter(v => v !== null && v !== undefined)
-            ) + 20,
+            max: maxAQI,
             ticks: {
               callback: function(value) {
                 return value;
