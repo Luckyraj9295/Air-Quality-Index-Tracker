@@ -197,7 +197,7 @@ AQIHistorySchema.statics.recordCityAccess = async function(city) {
     const cityNormalized = city.toLowerCase().trim();
     
     // Find the latest record for this city
-    const latestRecord = await this.findOne({ city: cityNormalized })
+    const latestRecord = await this.findOne({ city: { $regex: new RegExp(`^${cityNormalized}$`, 'i') } })
       .sort({ date: -1 })
       .exec();
     
@@ -235,17 +235,11 @@ AQIHistorySchema.statics.recordCityAccess = async function(city) {
  */
 AQIHistorySchema.statics.getWatchedCities = async function(activeOnly = true) {
   try {
-    const query = { isWatched: true };
-    
-    if (activeOnly) {
-      query.autoFetchEnabled = true;
-    }
-    
-    // Get latest record per city
+    // Always derive city status from the latest row first; then filter.
     const watchedCities = await this.aggregate([
-      { $match: query },
       { $sort: { city: 1, date: -1 } },
-      { $group: {
+      {
+        $group: {
           _id: '$city',
           city: { $first: '$city' },
           country: { $first: '$country' },
@@ -253,8 +247,14 @@ AQIHistorySchema.statics.getWatchedCities = async function(activeOnly = true) {
           longitude: { $first: '$longitude' },
           usageCount: { $first: '$usageCount' },
           lastAccessed: { $first: '$lastAccessed' },
+          isWatched: { $first: '$isWatched' },
           autoFetchEnabled: { $first: '$autoFetchEnabled' }
         }
+      },
+      {
+        $match: activeOnly
+          ? { isWatched: true, autoFetchEnabled: true }
+          : { isWatched: true }
       },
       { $sort: { usageCount: -1 } }
     ]);
@@ -273,7 +273,7 @@ AQIHistorySchema.statics.toggleAutoFetch = async function(city, enabled) {
   try {
     const cityNormalized = city.toLowerCase().trim();
     
-    const latestRecord = await this.findOne({ city: cityNormalized })
+    const latestRecord = await this.findOne({ city: { $regex: new RegExp(`^${cityNormalized}$`, 'i') } })
       .sort({ date: -1 })
       .exec();
     
@@ -296,7 +296,7 @@ AQIHistorySchema.statics.recordFetchAttempt = async function(city, success = tru
   try {
     const cityNormalized = city.toLowerCase().trim();
     
-    const latestRecord = await this.findOne({ city: cityNormalized })
+    const latestRecord = await this.findOne({ city: { $regex: new RegExp(`^${cityNormalized}$`, 'i') } })
       .sort({ date: -1 })
       .exec();
     

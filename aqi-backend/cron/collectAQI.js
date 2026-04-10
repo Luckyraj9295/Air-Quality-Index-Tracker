@@ -56,6 +56,13 @@ async function collectAQI() {
           date: { $gte: today }
         });
 
+        // Keep per-city watch/autofetch metadata stable across daily records.
+        const latestCityRecord = await AQIHistory.findOne({
+          city: { $regex: new RegExp(`^${aqiData.city}$`, 'i') }
+        })
+        .sort({ date: -1 })
+        .lean();
+
         if (existingRecord) {
           console.log(`ℹ️  Data already exists for ${aqiData.city} today - updating...`);
           
@@ -85,8 +92,11 @@ async function collectAQI() {
             category: waqiService.getAQICategory(aqiData.aqi),
             date: new Date(),
             source: 'WAQI',
-            isWatched: watchedCityNames.includes(city.toLowerCase()),
-            autoFetchEnabled: true
+            isWatched: latestCityRecord ? !!latestCityRecord.isWatched : watchedCityNames.includes(city.toLowerCase()),
+            usageCount: latestCityRecord ? (latestCityRecord.usageCount || 0) : 0,
+            lastAccessed: latestCityRecord ? (latestCityRecord.lastAccessed || null) : null,
+            autoFetchEnabled: latestCityRecord ? !!latestCityRecord.autoFetchEnabled : false,
+            fetchFailureCount: latestCityRecord ? (latestCityRecord.fetchFailureCount || 0) : 0
           });
 
           await aqiRecord.save();
