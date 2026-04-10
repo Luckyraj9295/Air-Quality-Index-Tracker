@@ -190,6 +190,7 @@ AQIHistorySchema.set('toObject', { virtuals: true });
 /**
  * Update autofetch tracking for a city (on latest record)
  * Called when user searches for a city
+ * Only registers once, then just updates metadata on subsequent accesses
  */
 AQIHistorySchema.statics.recordCityAccess = async function(city) {
   try {
@@ -201,12 +202,23 @@ AQIHistorySchema.statics.recordCityAccess = async function(city) {
       .exec();
     
     if (latestRecord) {
-      // Update autofetch tracking on latest record
-      latestRecord.isWatched = true;
-      latestRecord.usageCount = (latestRecord.usageCount || 0) + 1;
+      // Check if already watched
+      const isNewlyWatched = !latestRecord.isWatched;
+      
+      if (isNewlyWatched) {
+        // FIRST TIME: Register for autofetch
+        console.log(`✅ City newly registered for autofetch: ${latestRecord.city}`);
+        latestRecord.isWatched = true;
+        latestRecord.usageCount = 1;
+        latestRecord.autoFetchEnabled = true;
+        latestRecord.fetchFailureCount = 0;
+      } else {
+        // ALREADY WATCHED: Just update usage metrics
+        latestRecord.usageCount = (latestRecord.usageCount || 0) + 1;
+      }
+      
+      // Always update access time
       latestRecord.lastAccessed = new Date();
-      latestRecord.autoFetchEnabled = true;
-      latestRecord.fetchFailureCount = 0;
       
       await latestRecord.save();
     }
