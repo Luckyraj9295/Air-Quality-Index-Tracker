@@ -25,7 +25,7 @@ exports.getCurrentAQI = async (req, res) => {
 
     // Register city for autofetch (non-blocking)
     try {
-      await AQIHistory.recordCityAccess(aqiData.city);
+      await AQIHistory.recordCityAccess(aqiData);
       console.log(`📌 City access tracked for autofetch: ${aqiData.city}`);
     } catch (error) {
       console.error(`⚠️  Failed to register city for autofetch:`, error.message);
@@ -77,7 +77,7 @@ exports.getAQIByCoordinates = async (req, res) => {
 
     // Register city for autofetch (non-blocking)
     try {
-      await AQIHistory.recordCityAccess(aqiData.city);
+      await AQIHistory.recordCityAccess(aqiData);
       console.log(`📌 City access tracked for autofetch: ${aqiData.city}`);
     } catch (error) {
       console.error(`⚠️  Failed to register city for autofetch:`, error.message);
@@ -316,7 +316,7 @@ exports.storeAQI = async (req, res) => {
 
     // Register city for autofetch (non-blocking)
     try {
-      await AQIHistory.recordCityAccess(aqiData.city);
+      await AQIHistory.recordCityAccess(aqiData);
       console.log(`📌 City access tracked for autofetch: ${aqiData.city}`);
     } catch (error) {
       console.error(`⚠️  Failed to register city for autofetch:`, error.message);

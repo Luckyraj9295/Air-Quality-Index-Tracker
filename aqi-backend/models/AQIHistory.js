@@ -189,12 +189,53 @@ AQIHistorySchema.set('toObject', { virtuals: true });
 
 /**
  * Update autofetch tracking for a city (on latest record)
- * Called when user searches for a city
- * Only registers once, then just updates metadata on subsequent accesses
+ * Called when user searches for a city.
+ * Accepts either a city string or full AQI payload.
  */
-AQIHistorySchema.statics.recordCityAccess = async function(city) {
+AQIHistorySchema.statics.recordCityAccess = async function(input) {
   try {
-    const cityNormalized = city.toLowerCase().trim();
+    const hasPayload = typeof input === 'object' && input !== null;
+    const cityRaw = hasPayload ? input.city : input;
+    const cityNormalized = String(cityRaw || '').toLowerCase().trim();
+    if (!cityNormalized) return null;
+
+    const todayStart = new Date();
+    todayStart.setHours(0, 0, 0, 0);
+    const tomorrowStart = new Date(todayStart);
+    tomorrowStart.setDate(tomorrowStart.getDate() + 1);
+
+    // If we have full AQI payload, ensure today's row exists so the city can be watched immediately.
+    if (hasPayload) {
+      const payload = input;
+      await this.findOneAndUpdate(
+        {
+          city: { $regex: new RegExp(`^${cityNormalized}$`, 'i') },
+          date: { $gte: todayStart, $lt: tomorrowStart }
+        },
+        {
+          $set: {
+            city: payload.city,
+            country: payload.country || '',
+            latitude: payload.latitude,
+            longitude: payload.longitude,
+            aqi: payload.aqi,
+            pollutants: payload.pollutants || {},
+            dominantPollutant: payload.dominantPollutant || 'unknown',
+            category: this.getAQICategory(payload.aqi),
+            source: 'WAQI',
+            lastUpdated: new Date()
+          },
+          $setOnInsert: {
+            date: new Date()
+          }
+        },
+        {
+          new: true,
+          upsert: true,
+          setDefaultsOnInsert: true
+        }
+      );
+    }
     
     // Find the latest record for this city
     const latestRecord = await this.findOne({ city: { $regex: new RegExp(`^${cityNormalized}$`, 'i') } })
@@ -210,7 +251,10 @@ AQIHistorySchema.statics.recordCityAccess = async function(city) {
         console.log(`✅ City newly registered for autofetch: ${latestRecord.city}`);
         latestRecord.isWatched = true;
         latestRecord.usageCount = 1;
-        latestRecord.autoFetchEnabled = true;
+        // Respect existing disable state if it was explicitly turned off.
+        if (typeof latestRecord.autoFetchEnabled !== 'boolean') {
+          latestRecord.autoFetchEnabled = true;
+        }
         latestRecord.fetchFailureCount = 0;
       } else {
         // ALREADY WATCHED: Just update usage metrics
@@ -240,7 +284,7 @@ AQIHistorySchema.statics.getWatchedCities = async function(activeOnly = true) {
       { $sort: { city: 1, date: -1 } },
       {
         $group: {
-          _id: '$city',
+          _id: { $toLower: '$city' },
           city: { $first: '$city' },
           country: { $first: '$country' },
           latitude: { $first: '$latitude' },
