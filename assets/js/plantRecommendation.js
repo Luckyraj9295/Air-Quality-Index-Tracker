@@ -6,8 +6,8 @@ const PlantRecommendation = {
   currentPollutants: null,
   cachedRecommendations: new Map(),
   filterCache: new Map(),
-  plantsCacheKey: 'plantsDataV2',
-  plantsCacheTimeKey: 'plantsDataTimeV2',
+  plantsCacheKey: 'plantsDataV3',
+  plantsCacheTimeKey: 'plantsDataTimeV3',
 
   // Load plants data with caching
   loadPlants: async () => {
