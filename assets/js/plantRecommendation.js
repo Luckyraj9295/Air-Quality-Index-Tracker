@@ -6,13 +6,15 @@ const PlantRecommendation = {
   currentPollutants: null,
   cachedRecommendations: new Map(),
   filterCache: new Map(),
+  plantsCacheKey: 'plantsDataV2',
+  plantsCacheTimeKey: 'plantsDataTimeV2',
 
   // Load plants data with caching
   loadPlants: async () => {
     try {
       // Check localStorage cache first
-      const cached = localStorage.getItem('plantsData');
-      const cacheTime = localStorage.getItem('plantsDataTime');
+      const cached = localStorage.getItem(PlantRecommendation.plantsCacheKey);
+      const cacheTime = localStorage.getItem(PlantRecommendation.plantsCacheTimeKey);
       const cacheExpiry = 24 * 60 * 60 * 1000; // 24 hours
       
       if (cached && cacheTime && (Date.now() - parseInt(cacheTime)) < cacheExpiry) {
@@ -25,8 +27,8 @@ const PlantRecommendation = {
       PlantRecommendation.plants = await response.json();
       
       // Cache the data
-      localStorage.setItem('plantsData', JSON.stringify(PlantRecommendation.plants));
-      localStorage.setItem('plantsDataTime', Date.now().toString());
+      localStorage.setItem(PlantRecommendation.plantsCacheKey, JSON.stringify(PlantRecommendation.plants));
+      localStorage.setItem(PlantRecommendation.plantsCacheTimeKey, Date.now().toString());
     } catch (error) {
       console.error('Error loading plants data:', error);
       PlantRecommendation.plants = [];
@@ -167,11 +169,15 @@ const PlantRecommendation = {
       // Add score badge if available
       const scoreDisplay = plant.score ? 
         `<div class="plant-score-badge">Match: ${Math.round(plant.score)}%</div>` : '';
+
+      const plantVisual = plant.image
+        ? `<img src="${plant.image}" alt="${plant.name}" class="plant-photo" loading="lazy">`
+        : (plant.emoji || '🌿');
       
       plantCard.innerHTML = `
         ${scoreDisplay}
         <div class="plant-image">
-          ${plant.emoji}
+          ${plantVisual}
         </div>
         <div class="plant-content">
           <h3 class="plant-name">${plant.name}</h3>
@@ -259,6 +265,8 @@ const PlantRecommendation = {
   clearCache: () => {
     PlantRecommendation.cachedRecommendations.clear();
     PlantRecommendation.filterCache.clear();
+    localStorage.removeItem(PlantRecommendation.plantsCacheKey);
+    localStorage.removeItem(PlantRecommendation.plantsCacheTimeKey);
     localStorage.removeItem('plantsData');
     localStorage.removeItem('plantsDataTime');
   },
